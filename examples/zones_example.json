@@ -1,0 +1,1 @@
+{"_comment": "Lower bound (bpm) of HR zones Z1-Z5 from get_athlete_zones; one list applies to all periods, or give {current,previous,last_year}.", "zones": [0, 119, 148, 163, 178]}

@@ -1,0 +1,71 @@
+{
+  "title": "Training Dashboard",
+  "run_types": [
+    "Run",
+    "TrailRun",
+    "VirtualRun"
+  ],
+  "ride_types": [
+    "Ride",
+    "GravelRide",
+    "MountainBikeRide",
+    "VirtualRide"
+  ],
+  "hard_effort": 80,
+  "mix_edges": [
+    20,
+    50,
+    100
+  ],
+  "loops": [
+    {
+      "name": "Antibes AM loop",
+      "dist_km": [
+        11.0,
+        11.8
+      ],
+      "elev_m": [
+        235,
+        265
+      ]
+    },
+    {
+      "name": "Valbonne PM loop",
+      "dist_km": [
+        11.5,
+        12.0
+      ],
+      "elev_m": [
+        118,
+        136
+      ]
+    }
+  ],
+  "load": {
+    "resolution": 50,
+    "periods": [
+      "current"
+    ],
+    "weights": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "categories": {
+      "low": [
+        1,
+        2
+      ],
+      "high": [
+        3,
+        4
+      ],
+      "ana": [
+        5
+      ]
+    },
+    "max_weeks": 8
+  }
+}

@@ -1,0 +1,809 @@
+{
+ "_comment": "Current block = real activities (ids and start times as logged); previous/last_year = same real data with synthetic ids and approximate start times. Keep the repo private or replace.",
+ "current": [
+  {
+   "id": "20056568624",
+   "sport_type": "Run",
+   "start_local": "2026-09-06T08:33:00",
+   "summary": {
+    "distance": 10046.0,
+    "moving_time": 3295,
+    "elapsed_time": 3313,
+    "elevation_gain": 72,
+    "relative_effort": 149,
+    "avg_cadence": 80.898
+   }
+  },
+  {
+   "id": "20153687144",
+   "sport_type": "Run",
+   "start_local": "2026-09-13T08:43:00",
+   "summary": {
+    "distance": 10019.2,
+    "moving_time": 3315,
+    "elapsed_time": 3939,
+    "elevation_gain": 58,
+    "relative_effort": 116,
+    "avg_cadence": 81.1674
+   }
+  },
+  {
+   "id": "20250579576",
+   "sport_type": "Run",
+   "start_local": "2026-09-20T08:49:00",
+   "summary": {
+    "distance": 9444.2,
+    "moving_time": 3431,
+    "elapsed_time": 3762,
+    "elevation_gain": 65,
+    "relative_effort": 70,
+    "avg_cadence": 79.5463
+   }
+  },
+  {
+   "id": "20346288394",
+   "sport_type": "Run",
+   "start_local": "2026-09-27T08:24:00",
+   "summary": {
+    "distance": 10007.9,
+    "moving_time": 2824,
+    "elapsed_time": 2832,
+    "elevation_gain": 53,
+    "relative_effort": 158,
+    "avg_cadence": 83.866
+   }
+  },
+  {
+   "id": "20083579611",
+   "sport_type": "Ride",
+   "start_local": "2026-09-08T07:30:00",
+   "summary": {
+    "distance": 11440.3,
+    "moving_time": 1962,
+    "elapsed_time": 1962,
+    "elevation_gain": 241,
+    "relative_effort": 48
+   }
+  },
+  {
+   "id": "20090721000",
+   "sport_type": "Ride",
+   "start_local": "2026-09-08T18:17:00",
+   "summary": {
+    "distance": 11736.7,
+    "moving_time": 1756,
+    "elapsed_time": 1776,
+    "elevation_gain": 121,
+    "relative_effort": 21
+   }
+  },
+  {
+   "id": "20112424441",
+   "sport_type": "Ride",
+   "start_local": "2026-09-10T07:35:00",
+   "summary": {
+    "distance": 11461.8,
+    "moving_time": 1967,
+    "elapsed_time": 1967,
+    "elevation_gain": 246,
+    "relative_effort": 47
+   }
+  },
+  {
+   "id": "20119330902",
+   "sport_type": "Ride",
+   "start_local": "2026-09-10T18:33:00",
+   "summary": {
+    "distance": 9996.5,
+    "moving_time": 1295,
+    "elapsed_time": 1317,
+    "elevation_gain": 76,
+    "relative_effort": 8
+   }
+  },
+  {
+   "id": "20132760282",
+   "sport_type": "Ride",
+   "start_local": "2026-09-11T07:33:00",
+   "summary": {
+    "distance": 10744.1,
+    "moving_time": 1872,
+    "elapsed_time": 1921,
+    "elevation_gain": 239,
+    "relative_effort": 33
+   }
+  },
+  {
+   "id": "20132760266",
+   "sport_type": "Ride",
+   "start_local": "2026-09-11T18:16:00",
+   "summary": {
+    "distance": 9695.6,
+    "moving_time": 1416,
+    "elapsed_time": 1416,
+    "elevation_gain": 73,
+    "relative_effort": 9
+   }
+  },
+  {
+   "id": "20180353427",
+   "sport_type": "Ride",
+   "start_local": "2026-09-15T07:28:00",
+   "summary": {
+    "distance": 11380.2,
+    "moving_time": 2042,
+    "elapsed_time": 2042,
+    "elevation_gain": 249,
+    "relative_effort": 40
+   }
+  },
+  {
+   "id": "20187010670",
+   "sport_type": "Ride",
+   "start_local": "2026-09-15T17:27:00",
+   "summary": {
+    "distance": 11627.1,
+    "moving_time": 1763,
+    "elapsed_time": 1854,
+    "elevation_gain": 127,
+    "relative_effort": 16
+   }
+  },
+  {
+   "id": "20195445431",
+   "sport_type": "Ride",
+   "start_local": "2026-09-16T07:32:00",
+   "summary": {
+    "distance": 11503.2,
+    "moving_time": 2079,
+    "elapsed_time": 2118,
+    "elevation_gain": 249,
+    "relative_effort": 39
+   }
+  },
+  {
+   "id": "20202088168",
+   "sport_type": "Ride",
+   "start_local": "2026-09-16T17:27:00",
+   "summary": {
+    "distance": 11934.4,
+    "moving_time": 1977,
+    "elapsed_time": 2258,
+    "elevation_gain": 135,
+    "relative_effort": 12
+   }
+  },
+  {
+   "id": "20209579036",
+   "sport_type": "Ride",
+   "start_local": "2026-09-17T07:32:00",
+   "summary": {
+    "distance": 11347.3,
+    "moving_time": 1928,
+    "elapsed_time": 1946,
+    "elevation_gain": 243,
+    "relative_effort": 41
+   }
+  },
+  {
+   "id": "20216076003",
+   "sport_type": "Ride",
+   "start_local": "2026-09-17T18:02:00",
+   "summary": {
+    "distance": 11711.5,
+    "moving_time": 1750,
+    "elapsed_time": 1765,
+    "elevation_gain": 134,
+    "relative_effort": 16
+   }
+  },
+  {
+   "id": "20223141487",
+   "sport_type": "Ride",
+   "start_local": "2026-09-18T07:47:00",
+   "summary": {
+    "distance": 11506.2,
+    "moving_time": 2077,
+    "elapsed_time": 2105,
+    "elevation_gain": 252,
+    "relative_effort": 40
+   }
+  },
+  {
+   "id": "20229462600",
+   "sport_type": "Ride",
+   "start_local": "2026-09-18T17:31:00",
+   "summary": {
+    "distance": 13968.4,
+    "moving_time": 2753,
+    "elapsed_time": 2930,
+    "elevation_gain": 178,
+    "relative_effort": 15
+   }
+  },
+  {
+   "id": "20291981054",
+   "sport_type": "Ride",
+   "start_local": "2026-09-23T07:29:00",
+   "summary": {
+    "distance": 11513.7,
+    "moving_time": 1885,
+    "elapsed_time": 1885,
+    "elevation_gain": 244,
+    "relative_effort": 28
+   }
+  },
+  {
+   "id": "20299099674",
+   "sport_type": "Ride",
+   "start_local": "2026-09-23T18:23:00",
+   "summary": {
+    "distance": 9946.9,
+    "moving_time": 1274,
+    "elapsed_time": 1274,
+    "elevation_gain": 74,
+    "relative_effort": 10
+   }
+  },
+  {
+   "id": "20319923697",
+   "sport_type": "Ride",
+   "start_local": "2026-09-25T07:32:00",
+   "summary": {
+    "distance": 11505.5,
+    "moving_time": 1878,
+    "elapsed_time": 1878,
+    "elevation_gain": 246,
+    "relative_effort": 46
+   }
+  },
+  {
+   "id": "20325786225",
+   "sport_type": "Ride",
+   "start_local": "2026-09-25T17:39:00",
+   "summary": {
+    "distance": 10129.0,
+    "moving_time": 1468,
+    "elapsed_time": 1720,
+    "elevation_gain": 85,
+    "relative_effort": 8
+   }
+  },
+  {
+   "id": "20360072200",
+   "sport_type": "Ride",
+   "start_local": "2026-09-28T07:32:00",
+   "summary": {
+    "distance": 11593.8,
+    "moving_time": 2089,
+    "elapsed_time": 2105,
+    "elevation_gain": 249,
+    "relative_effort": 33
+   }
+  },
+  {
+   "id": "20366292688",
+   "sport_type": "Ride",
+   "start_local": "2026-09-28T17:56:00",
+   "summary": {
+    "distance": 11758.7,
+    "moving_time": 1817,
+    "elapsed_time": 1834,
+    "elevation_gain": 124,
+    "relative_effort": 10
+   }
+  },
+  {
+   "id": "20373594688",
+   "sport_type": "Ride",
+   "start_local": "2026-09-29T07:24:00",
+   "summary": {
+    "distance": 11615.8,
+    "moving_time": 2054,
+    "elapsed_time": 2054,
+    "elevation_gain": 244,
+    "relative_effort": 34
+   }
+  },
+  {
+   "id": "20382769341",
+   "sport_type": "Ride",
+   "start_local": "2026-09-29T20:07:00",
+   "summary": {
+    "distance": 9960.7,
+    "moving_time": 1228,
+    "elapsed_time": 1228,
+    "elevation_gain": 68,
+    "relative_effort": 7
+   }
+  },
+  {
+   "id": "20395278424",
+   "sport_type": "Ride",
+   "start_local": "2026-09-30T06:46:00",
+   "summary": {
+    "distance": 10086.5,
+    "moving_time": 1630,
+    "elapsed_time": 1630,
+    "elevation_gain": 228,
+    "relative_effort": 29
+   }
+  },
+  {
+   "id": "20395290328",
+   "sport_type": "Ride",
+   "start_local": "2026-09-30T16:33:00",
+   "summary": {
+    "distance": 11811.3,
+    "moving_time": 1787,
+    "elapsed_time": 1863,
+    "elevation_gain": 129,
+    "relative_effort": 11
+   }
+  },
+  {
+   "id": "20402420135",
+   "sport_type": "Ride",
+   "start_local": "2026-10-01T07:23:00",
+   "summary": {
+    "distance": 10045.8,
+    "moving_time": 1804,
+    "elapsed_time": 1804,
+    "elevation_gain": 224,
+    "relative_effort": 24
+   }
+  },
+  {
+   "id": "20415931906",
+   "sport_type": "Ride",
+   "start_local": "2026-10-01T18:16:00",
+   "summary": {
+    "distance": 11718.5,
+    "moving_time": 1767,
+    "elapsed_time": 1795,
+    "elevation_gain": 130,
+    "relative_effort": 13
+   }
+  },
+  {
+   "id": "20415931985",
+   "sport_type": "Ride",
+   "start_local": "2026-10-02T07:19:00",
+   "summary": {
+    "distance": 11511.7,
+    "moving_time": 2121,
+    "elapsed_time": 2121,
+    "elevation_gain": 249,
+    "relative_effort": 27
+   }
+  },
+  {
+   "id": "20421542575",
+   "sport_type": "Ride",
+   "start_local": "2026-10-02T17:06:00",
+   "summary": {
+    "distance": 11752.8,
+    "moving_time": 1865,
+    "elapsed_time": 1865,
+    "elevation_gain": 123,
+    "relative_effort": 10
+   }
+  }
+ ],
+ "previous": [
+  {
+   "id": "ex-2026-08-10-0",
+   "sport_type": "Ride",
+   "start_local": "2026-08-10T07:30:00",
+   "summary": {
+    "distance": 25978.8,
+    "moving_time": 5241,
+    "elevation_gain": 720,
+    "relative_effort": 154
+   }
+  },
+  {
+   "id": "ex-2026-08-11-1",
+   "sport_type": "Ride",
+   "start_local": "2026-08-11T07:30:00",
+   "summary": {
+    "distance": 81492.2,
+    "moving_time": 9861,
+    "elevation_gain": 485,
+    "relative_effort": 310
+   }
+  },
+  {
+   "id": "ex-2026-08-13-2",
+   "sport_type": "Ride",
+   "start_local": "2026-08-13T07:30:00",
+   "summary": {
+    "distance": 39571.9,
+    "moving_time": 6033,
+    "elevation_gain": 564,
+    "relative_effort": 162
+   }
+  },
+  {
+   "id": "ex-2026-08-14-3",
+   "sport_type": "Ride",
+   "start_local": "2026-08-14T07:30:00",
+   "summary": {
+    "distance": 50603.8,
+    "moving_time": 8447,
+    "elevation_gain": 1090,
+    "relative_effort": 172
+   }
+  },
+  {
+   "id": "ex-2026-08-23-4",
+   "sport_type": "Run",
+   "start_local": "2026-08-23T08:30:00",
+   "summary": {
+    "distance": 7044.6,
+    "moving_time": 2664,
+    "elevation_gain": 60,
+    "relative_effort": 74,
+    "avg_cadence": 78.7086
+   }
+  },
+  {
+   "id": "ex-2026-08-25-5",
+   "sport_type": "Ride",
+   "start_local": "2026-08-25T07:30:00",
+   "summary": {
+    "distance": 11587.1,
+    "moving_time": 1956,
+    "elevation_gain": 239,
+    "relative_effort": 38
+   }
+  },
+  {
+   "id": "ex-2026-08-25-6",
+   "sport_type": "Ride",
+   "start_local": "2026-08-25T17:45:00",
+   "summary": {
+    "distance": 11807.6,
+    "moving_time": 1736,
+    "elevation_gain": 126,
+    "relative_effort": 20
+   }
+  },
+  {
+   "id": "ex-2026-08-27-7",
+   "sport_type": "Ride",
+   "start_local": "2026-08-27T07:30:00",
+   "summary": {
+    "distance": 11569.3,
+    "moving_time": 2403,
+    "elevation_gain": 244,
+    "relative_effort": 30
+   }
+  },
+  {
+   "id": "ex-2026-08-27-8",
+   "sport_type": "Ride",
+   "start_local": "2026-08-27T17:45:00",
+   "summary": {
+    "distance": 11783.4,
+    "moving_time": 1732,
+    "elevation_gain": 124,
+    "relative_effort": 17
+   }
+  },
+  {
+   "id": "ex-2026-08-30-9",
+   "sport_type": "Run",
+   "start_local": "2026-08-30T08:30:00",
+   "summary": {
+    "distance": 10005,
+    "moving_time": 3326,
+    "elevation_gain": 61,
+    "relative_effort": 143,
+    "avg_cadence": 81.3306
+   }
+  },
+  {
+   "id": "ex-2026-09-04-10",
+   "sport_type": "Ride",
+   "start_local": "2026-09-04T07:30:00",
+   "summary": {
+    "distance": 11458,
+    "moving_time": 1919,
+    "elevation_gain": 258,
+    "relative_effort": 58
+   }
+  },
+  {
+   "id": "ex-2026-09-04-11",
+   "sport_type": "Ride",
+   "start_local": "2026-09-04T17:45:00",
+   "summary": {
+    "distance": 10050.4,
+    "moving_time": 1514,
+    "elevation_gain": 87,
+    "relative_effort": 17
+   }
+  }
+ ],
+ "last_year": [
+  {
+   "id": "ex-2025-09-07-0",
+   "sport_type": "Run",
+   "start_local": "2025-09-07T08:30:00",
+   "summary": {
+    "distance": 6089.5,
+    "moving_time": 2276,
+    "elevation_gain": 48,
+    "relative_effort": 45,
+    "avg_cadence": 80.0503
+   }
+  },
+  {
+   "id": "ex-2025-09-11-1",
+   "sport_type": "Ride",
+   "start_local": "2025-09-11T07:30:00",
+   "summary": {
+    "distance": 11469.5,
+    "moving_time": 1976,
+    "elevation_gain": 261,
+    "relative_effort": 51
+   }
+  },
+  {
+   "id": "ex-2025-09-11-2",
+   "sport_type": "Ride",
+   "start_local": "2025-09-11T17:45:00",
+   "summary": {
+    "distance": 11679,
+    "moving_time": 1689,
+    "elevation_gain": 122,
+    "relative_effort": 16
+   }
+  },
+  {
+   "id": "ex-2025-09-12-3",
+   "sport_type": "Ride",
+   "start_local": "2025-09-12T07:30:00",
+   "summary": {
+    "distance": 11461.2,
+    "moving_time": 1941,
+    "elevation_gain": 251,
+    "relative_effort": 36
+   }
+  },
+  {
+   "id": "ex-2025-09-12-4",
+   "sport_type": "Ride",
+   "start_local": "2025-09-12T17:45:00",
+   "summary": {
+    "distance": 11674.3,
+    "moving_time": 1843,
+    "elevation_gain": 127,
+    "relative_effort": 10
+   }
+  },
+  {
+   "id": "ex-2025-09-14-5",
+   "sport_type": "Run",
+   "start_local": "2025-09-14T08:30:00",
+   "summary": {
+    "distance": 10008.5,
+    "moving_time": 3572,
+    "elevation_gain": 66,
+    "relative_effort": 73,
+    "avg_cadence": 80.9784
+   }
+  },
+  {
+   "id": "ex-2025-09-15-6",
+   "sport_type": "Ride",
+   "start_local": "2025-09-15T07:30:00",
+   "summary": {
+    "distance": 11452.6,
+    "moving_time": 1892,
+    "elevation_gain": 251,
+    "relative_effort": 48
+   }
+  },
+  {
+   "id": "ex-2025-09-15-7",
+   "sport_type": "Ride",
+   "start_local": "2025-09-15T17:45:00",
+   "summary": {
+    "distance": 11663.5,
+    "moving_time": 1807,
+    "elevation_gain": 129,
+    "relative_effort": 11
+   }
+  },
+  {
+   "id": "ex-2025-09-16-8",
+   "sport_type": "Ride",
+   "start_local": "2025-09-16T07:30:00",
+   "summary": {
+    "distance": 11510.6,
+    "moving_time": 1974,
+    "elevation_gain": 243,
+    "relative_effort": 34
+   }
+  },
+  {
+   "id": "ex-2025-09-16-9",
+   "sport_type": "Ride",
+   "start_local": "2025-09-16T17:45:00",
+   "summary": {
+    "distance": 11683.5,
+    "moving_time": 1752,
+    "elevation_gain": 124,
+    "relative_effort": 15
+   }
+  },
+  {
+   "id": "ex-2025-09-18-10",
+   "sport_type": "Ride",
+   "start_local": "2025-09-18T07:30:00",
+   "summary": {
+    "distance": 11429.5,
+    "moving_time": 2046,
+    "elevation_gain": 251,
+    "relative_effort": 36
+   }
+  },
+  {
+   "id": "ex-2025-09-18-11",
+   "sport_type": "Ride",
+   "start_local": "2025-09-18T17:45:00",
+   "summary": {
+    "distance": 9892.7,
+    "moving_time": 1351,
+    "elevation_gain": 79,
+    "relative_effort": 11
+   }
+  },
+  {
+   "id": "ex-2025-09-19-12",
+   "sport_type": "Ride",
+   "start_local": "2025-09-19T07:30:00",
+   "summary": {
+    "distance": 11454.1,
+    "moving_time": 1917,
+    "elevation_gain": 245,
+    "relative_effort": 44
+   }
+  },
+  {
+   "id": "ex-2025-09-19-13",
+   "sport_type": "Ride",
+   "start_local": "2025-09-19T17:45:00",
+   "summary": {
+    "distance": 11703.3,
+    "moving_time": 1805,
+    "elevation_gain": 132,
+    "relative_effort": 16
+   }
+  },
+  {
+   "id": "ex-2025-09-23-14",
+   "sport_type": "Ride",
+   "start_local": "2025-09-23T07:30:00",
+   "summary": {
+    "distance": 11508.4,
+    "moving_time": 1971,
+    "elevation_gain": 254,
+    "relative_effort": 46
+   }
+  },
+  {
+   "id": "ex-2025-09-23-15",
+   "sport_type": "Ride",
+   "start_local": "2025-09-23T17:45:00",
+   "summary": {
+    "distance": 11766.5,
+    "moving_time": 1690,
+    "elevation_gain": 130,
+    "relative_effort": 23
+   }
+  },
+  {
+   "id": "ex-2025-09-25-16",
+   "sport_type": "Ride",
+   "start_local": "2025-09-25T07:30:00",
+   "summary": {
+    "distance": 11506,
+    "moving_time": 1921,
+    "elevation_gain": 254,
+    "relative_effort": 37
+   }
+  },
+  {
+   "id": "ex-2025-09-25-17",
+   "sport_type": "Ride",
+   "start_local": "2025-09-25T17:45:00",
+   "summary": {
+    "distance": 11706.3,
+    "moving_time": 1708,
+    "elevation_gain": 133,
+    "relative_effort": 12
+   }
+  },
+  {
+   "id": "ex-2025-09-26-18",
+   "sport_type": "Ride",
+   "start_local": "2025-09-26T07:30:00",
+   "summary": {
+    "distance": 11419.1,
+    "moving_time": 1959,
+    "elevation_gain": 256,
+    "relative_effort": 37
+   }
+  },
+  {
+   "id": "ex-2025-09-26-19",
+   "sport_type": "Ride",
+   "start_local": "2025-09-26T17:45:00",
+   "summary": {
+    "distance": 11737.9,
+    "moving_time": 1715,
+    "elevation_gain": 126,
+    "relative_effort": 22
+   }
+  },
+  {
+   "id": "ex-2025-09-28-20",
+   "sport_type": "Run",
+   "start_local": "2025-09-28T08:30:00",
+   "summary": {
+    "distance": 7354.5,
+    "moving_time": 2606,
+    "elevation_gain": 32,
+    "relative_effort": 54,
+    "avg_cadence": 80.2253
+   }
+  },
+  {
+   "id": "ex-2025-09-30-21",
+   "sport_type": "Ride",
+   "start_local": "2025-09-30T07:30:00",
+   "summary": {
+    "distance": 11446.9,
+    "moving_time": 1920,
+    "elevation_gain": 253,
+    "relative_effort": 43
+   }
+  },
+  {
+   "id": "ex-2025-09-30-22",
+   "sport_type": "Ride",
+   "start_local": "2025-09-30T17:45:00",
+   "summary": {
+    "distance": 11663.9,
+    "moving_time": 1743,
+    "elevation_gain": 122,
+    "relative_effort": 12
+   }
+  },
+  {
+   "id": "ex-2025-10-02-23",
+   "sport_type": "Ride",
+   "start_local": "2025-10-02T07:30:00",
+   "summary": {
+    "distance": 11212.3,
+    "moving_time": 1826,
+    "elevation_gain": 250,
+    "relative_effort": 45
+   }
+  },
+  {
+   "id": "ex-2025-10-02-24",
+   "sport_type": "Ride",
+   "start_local": "2025-10-02T17:45:00",
+   "summary": {
+    "distance": 11583,
+    "moving_time": 1687,
+    "elevation_gain": 131,
+    "relative_effort": 13
+   }
+  }
+ ]
+}
