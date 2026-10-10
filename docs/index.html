@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Training Dashboard</title>
+<style>
+  :root{--bg:#0e1116;--card:#171c24;--line:#262d38;--txt:#e6e9ef;--mut:#8b94a3;--pos:#6ee7a8;--neg:#ff7a7a;--run:#ff7a45;--ride:#4aa3ff}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:56px}
+  body{margin:0;padding:0 20px 24px;background:radial-gradient(1200px 500px at 70% -10%,#16202e 0,#0e1116 60%) no-repeat,var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  nav{position:sticky;top:0;z-index:5;background:#0e1116ee;backdrop-filter:blur(6px);padding:12px 0;border-bottom:1px solid var(--line);display:flex;gap:18px;font-size:13px;margin-bottom:14px}
+  nav a{color:var(--mut);text-decoration:none;font-weight:600}nav a:hover{color:var(--txt)}
+  h1{font-size:22px;margin:6px 0 4px}
+  .sub{color:var(--mut);font-size:12px;margin-bottom:10px;line-height:1.5}
+  .periods{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+  .pill{font:inherit;font-size:12px;color:var(--mut);background:#171c24;border:1px solid var(--line);border-radius:99px;padding:5px 11px;cursor:pointer;transition:.15s}
+  .pill b{color:var(--txt)}.pill i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .pill:hover{border-color:#4a5568}.pill.off{opacity:.45}.pill.off b{text-decoration:line-through}
+  .ctl{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:6px;font-size:12px;color:var(--mut)}
+  .seg{display:inline-flex;background:#171c24;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .seg button{font:inherit;font-size:12px;color:var(--mut);background:none;border:0;padding:5px 12px;cursor:pointer}
+  .seg button.on{background:#263143;color:#fff}.seg button:hover{color:#fff}
+  #weekChip{display:none;background:#1c2634;border:1px solid #33425a;border-radius:8px;padding:5px 10px;color:var(--txt)}
+  #weekChip button{font:inherit;font-size:11px;margin-left:8px;color:var(--mut);background:none;border:0;cursor:pointer;text-decoration:underline}
+  section{margin-top:26px}
+  section>h2{font-size:17px;margin:0 0 12px;padding-left:10px;border-left:4px solid var(--mut)}
+  #run>h2{border-color:var(--run)}#ride>h2{border-color:var(--ride)}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .card{background:linear-gradient(180deg,#1a202a,#161b23);border:1px solid var(--line);border-radius:14px;padding:16px;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:#364050}
+  .card h3{font-size:12px;margin:0 0 12px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:14px}
+  .stat b{display:block;font-size:24px}
+  .stat .l{font-size:12px;color:var(--mut)}
+  .chip{display:block;font-size:11px;margin-top:4px;color:var(--mut)}
+  .spark{width:100%;height:auto;max-height:42px;margin-top:8px;display:block}
+  .pos{color:var(--pos)}.neg{color:var(--neg)}
+  .wide{grid-column:1/-1}
+  svg{width:100%;height:auto;display:block;overflow:visible}
+  .scroll{overflow-x:auto;overflow-y:hidden;padding-bottom:6px;scrollbar-width:thin;scrollbar-color:#364050 transparent}
+  .scroll svg{overflow:hidden}
+  .hint{float:right;font-size:10px;color:#6b7686;text-transform:none;letter-spacing:0}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+  th{color:var(--mut);font-weight:600;font-size:12px}
+  td.n,th.n{text-align:right}
+  .table-wrap{overflow-x:auto}
+  .note{font-size:11px;color:var(--mut);margin-top:8px}
+  .flags{font-size:12px;color:#f5b942;margin:8px 0 0;padding-left:18px}
+  .coach ul{margin:0;padding-left:18px;font-size:14px;line-height:1.55}
+  .coach li{margin-bottom:8px}.coach li b{color:#fff}
+  .share{display:grid;gap:12px;font-size:12px}
+  .share .bar{display:flex;height:22px;border-radius:6px;overflow:hidden;margin-top:4px}
+  .share .bar div{display:flex;align-items:center;padding-left:6px;color:#0e1116;font-weight:700;font-size:11px;transform-origin:left;animation:grow-x .9s cubic-bezier(.2,.8,.2,1) backwards}
+  .load{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+  .loadL{display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center}
+  @media(max-width:520px){.loadL{grid-template-columns:1fr}}
+  .donut{width:130px;height:130px}
+  .lrow{margin-bottom:14px}.lhead{display:flex;justify-content:space-between;font-size:13px;gap:8px;flex-wrap:wrap}
+  .lhead small{color:var(--mut);margin-left:6px}
+  .lhead i,.lleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+  .lbar{height:10px;background:#262d38;border-radius:5px;overflow:hidden;margin:6px 0 4px}
+  .lbar div{height:100%;border-radius:5px;transform-origin:left;animation:grow-x 1s cubic-bezier(.2,.8,.2,1) backwards}
+  .lsub{font-size:11px;color:var(--mut)}.lsub .chip{display:inline;margin-left:10px}
+  .lleg{font-size:11px;color:var(--mut);margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+  .lleg .sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin:0 1px}
+  .ctl2{display:flex;flex-wrap:wrap;gap:10px;margin:-2px 0 12px}
+  #tip{position:absolute;display:none;pointer-events:none;z-index:9;background:#0b0e13ee;border:1px solid #333b49;border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.5;box-shadow:0 6px 24px #0008;max-width:240px}
+  #tip b{color:#fff}
+  /* motion: only runs when the chart scrolls into view (class .pre is removed by the observer) */
+  @keyframes grow{from{transform:scaleY(0)}}
+  @keyframes grow-x{from{transform:scaleX(0)}}
+  @keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  @keyframes fade{from{opacity:0}}
+  @keyframes pop{from{opacity:0;transform:scale(.3)}}
+  @keyframes sweep{from{stroke-dasharray:0 100}}
+  .anim .b{transform-box:fill-box;transform-origin:50% 100%;animation:grow .8s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--i,0)*16ms)}
+  .anim .b:hover{filter:brightness(1.25)}
+  .anim .draw{stroke-dasharray:1;stroke-dashoffset:0;animation:draw 1.4s cubic-bezier(.3,.7,.2,1) backwards}
+  .anim .glow{filter:drop-shadow(0 0 5px currentColor)}
+  .anim .area{animation:fade 1.6s ease-out backwards}
+  .anim .cell{transform-box:fill-box;transform-origin:center;animation:pop .45s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--c,0)*9ms)}
+  .anim .cell:hover{stroke:#fff;stroke-width:1.2}
+  .anim .dseg{animation:sweep 1.1s cubic-bezier(.3,.7,.2,1) backwards}
+  .anim.pre *{animation-play-state:paused!important}
+  .anim.static *{animation:none!important}
+  @media (prefers-reduced-motion:reduce){.anim *,.share .bar div,.lbar div{animation:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gd"></defs></svg>
+<nav><a href="#global">Global</a><a href="#run">Running</a><a href="#ride">Cycling</a></nav>
+<h1 id="title">Training Dashboard</h1>
+<div class="sub" id="sub"></div>
+<div class="periods" id="periods"></div>
+<div class="ctl"><span>View</span><span class="seg" id="segSport"><button data-s="all" class="on">All</button><button data-s="run">Run</button><button data-s="ride">Ride</button></span><span id="weekChip"></span></div>
+<ul class="flags" id="flags"></ul>
+
+<section id="global">
+  <h2>Global view · running + cycling</h2>
+  <div class="stats" id="gTiles"></div>
+  <div class="grid">
+    <div class="card"><h3>Run vs ride share (this block)</h3><div class="share" id="share"></div></div>
+    <div class="card wide" id="loadCard" style="display:none"><h3 id="loadTitle">Training load by intensity · this block</h3>
+      <div class="load"><div class="loadL"><svg id="donut" class="donut" viewBox="0 0 120 120"></svg><div id="loadRows"></div></div>
+      <div><svg id="loadW" viewBox="0 0 400 235"></svg><div class="lleg" id="loadLeg"></div></div></div>
+      <div class="note" id="loadNote"></div></div>
+    <div class="card wide"><h3><span id="tHeat">Daily training calendar</span></h3>
+      <div class="ctl2"><span class="seg" id="heatP"></span><span class="seg" id="heatM"><button data-m="km" class="on">Distance</button><button data-m="re">Effort</button></span></div>
+      <svg id="heat" viewBox="0 0 700 170"></svg><div class="lleg" id="heatLeg"></div></div>
+    <div class="card wide"><h3><span id="tGCum">Cumulative distance by day (km)</span></h3><svg id="gCum" viewBox="0 0 700 240"></svg></div>
+    <div class="card"><h3><span id="tGKm">Weekly distance (km)</span></h3><svg id="gKm" viewBox="0 0 400 235"></svg></div>
+    <div class="card"><h3><span id="tGRe">Weekly relative effort</span></h3><svg id="gRe" viewBox="0 0 400 235"></svg></div>
+    <div class="card"><h3><span id="tGDays">Active days per week</span></h3><svg id="gDays" viewBox="0 0 400 235"></svg></div>
+  </div>
+</section>
+
+<section id="run">
+  <h2>Running</h2>
+  <div class="stats" id="rTiles"></div>
+  <div class="grid">
+    <div class="card wide"><h3>Head-to-head</h3><div class="table-wrap"><table><thead id="rHead"></thead><tbody id="rCmp"></tbody></table></div></div>
+    <div class="card"><h3>Weekly run distance (km)</h3><svg id="rKm" viewBox="0 0 400 235"></svg></div>
+    <div class="card"><h3>Relative effort by run</h3><svg id="rRe" viewBox="0 0 400 235"></svg></div>
+    <div class="card wide"><h3>Pace by run (min/km) · faster is higher</h3><svg id="rPace" viewBox="0 0 700 250"></svg></div>
+    <div class="card wide"><h3 id="rTitle">Runs this block</h3><div class="table-wrap"><table>
+      <thead><tr><th>Date</th><th class="n">Distance</th><th class="n">Pace</th><th class="n">Time</th><th class="n">Elev.</th><th class="n">Effort</th></tr></thead>
+      <tbody id="rRows"></tbody></table></div></div>
+    <div class="card wide coach" id="cRun"></div>
+  </div>
+</section>
+
+<section id="ride">
+  <h2>Cycling</h2>
+  <div class="stats" id="bTiles"></div>
+  <div class="grid">
+    <div class="card wide"><h3>Head-to-head</h3><div class="table-wrap"><table><thead id="bHead"></thead><tbody id="bCmp"></tbody></table></div>
+      <div class="note" id="bNote"></div></div>
+    <div class="card wide"><h3>Cumulative cycling distance by day (km)</h3><svg id="bCum" viewBox="0 0 700 240"></svg></div>
+    <div class="card"><h3>Weekly ride distance (km)</h3><svg id="bKm" viewBox="0 0 400 235"></svg></div>
+    <div class="card"><h3>Weekly elevation gain (m)</h3><svg id="bEl" viewBox="0 0 400 235"></svg></div>
+    <div class="card"><h3>Rides per week</h3><svg id="bN" viewBox="0 0 400 235"></svg></div>
+    <div class="card"><h3>Ride effort mix (number of rides)</h3><svg id="bMix" viewBox="0 0 400 235"></svg></div>
+    <div class="card wide"><h3>Most recent rides</h3><div class="table-wrap"><table>
+      <thead><tr><th>Date</th><th class="n">Distance</th><th class="n">Time</th><th class="n">Speed</th><th class="n">Elev.</th><th class="n">Effort</th></tr></thead>
+      <tbody id="bRows"></tbody></table></div></div>
+    <div class="card wide coach" id="cRide"></div>
+  </div>
+</section>
+
+<section id="overall"><div class="card coach" id="cAll"></div></section>
+<div id="tip"></div>
+
+<script>
+const DATA={"generated": "2026-10-09", "title": "Training Dashboard", "config": {"hard": 80, "edges": [20, 50, 100]}, "weeks": 4, "days": 28, "partial_days": 0, "week_labels": ["Wk 1", "Wk 2", "Wk 3", "Wk 4"], "periods": [{"key": "current", "name": "This block", "short": "this block", "label": "12 Sep – 9 Oct 2026", "start": "2026-09-12", "end": "2026-10-09"}, {"key": "previous", "name": "Previous 4 weeks", "short": "prev 4 wks", "label": "15 Aug – 11 Sep 2026", "start": "2026-08-15", "end": "2026-09-11"}, {"key": "last_year", "name": "Same weeks last year", "short": "last year", "label": "13 Sep – 10 Oct 2025", "start": "2025-09-13", "end": "2025-10-10"}], "all": [{"n": 25, "km": 279.4, "hrs": 14.06, "elev": 4160, "re": 853, "days": 14, "weeks_active": 3, "wk_km": [105.0, 52.5, 121.9, 0.0], "wk_elev": [1625, 714, 1821, 0], "wk_re": [335, 162, 356, 0], "wk_n": [9, 5, 11, 0], "wk_hrs": [5.47, 2.76, 5.83, 0.0], "day_re": [0, 116, 0, 56, 51, 57, 55, 0, 70, 0, 0, 38, 0, 54, 0, 158, 43, 41, 40, 37, 37, 0, 0, 0, 0, 0, 0, 0], "wk_days": [5, 3, 6, 0], "cum": [0.0, 10.0, 10.0, 33.0, 56.5, 79.5, 105.0, 105.0, 114.4, 114.4, 114.4, 135.9, 135.9, 157.5, 157.5, 167.5, 190.9, 212.5, 234.4, 256.1, 279.4, 279.4, 279.4, 279.4, 279.4, 279.4, 279.4, 279.4], "kmh": 19.9, "pace": 181, "m_per_km": 14.9, "avg_km": 11.2, "longest": 14.0, "peak": 121.9, "avg_re": 34.1, "re_hr": 61, "hard": 2, "easy_pct": 44, "mix": [11, 11, 1, 2], "cad": 81.5, "acwr_re": 0.0, "acwr_km": 0.0}, {"n": 8, "km": 85.3, "hrs": 4.79, "elev": 1199, "re": 397, "days": 5, "weeks_active": 2, "wk_km": [0.0, 53.8, 31.5, 0.0], "wk_elev": [0, 793, 406, 0], "wk_re": [0, 179, 218, 0], "wk_n": [0, 5, 3, 0], "wk_hrs": [0.0, 2.91, 1.88, 0.0], "day_re": [0, 0, 0, 0, 0, 0, 0, 0, 74, 0, 58, 0, 47, 0, 0, 143, 0, 0, 0, 0, 75, 0, 0, 0, 0, 0, 0, 0], "wk_days": [0, 3, 2, 0], "cum": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.0, 7.0, 30.4, 30.4, 53.8, 53.8, 53.8, 63.8, 63.8, 63.8, 63.8, 63.8, 85.3, 85.3, 85.3, 85.3, 85.3, 85.3, 85.3, 85.3], "kmh": 17.8, "pace": 202, "m_per_km": 14.1, "avg_km": 10.7, "longest": 11.8, "peak": 53.8, "avg_re": 49.6, "re_hr": 83, "hard": 1, "easy_pct": 25, "mix": [2, 3, 2, 1], "cad": 80.0, "acwr_re": 0.0, "acwr_km": 0.0}, {"n": 20, "km": 223.7, "hrs": 10.79, "elev": 3461, "re": 632, "days": 11, "weeks_active": 3, "wk_km": [100.8, 69.6, 53.3, 0.0], "wk_elev": [1520, 1153, 788, 0], "wk_re": [288, 177, 167, 0], "wk_n": [9, 6, 5, 0], "wk_hrs": [5.03, 3.05, 2.72, 0.0], "day_re": [0, 73, 59, 49, 0, 47, 60, 0, 0, 0, 69, 0, 49, 59, 0, 54, 0, 55, 0, 58, 0, 0, 0, 0, 0, 0, 0, 0], "wk_days": [5, 3, 3, 0], "cum": [0.0, 10.0, 33.1, 56.3, 56.3, 77.6, 100.8, 100.8, 100.8, 100.8, 124.1, 124.1, 147.3, 170.4, 170.4, 177.8, 177.8, 200.9, 200.9, 223.7, 223.7, 223.7, 223.7, 223.7, 223.7, 223.7, 223.7, 223.7], "kmh": 20.7, "pace": 174, "m_per_km": 15.5, "avg_km": 11.2, "longest": 11.8, "peak": 100.8, "avg_re": 31.6, "re_hr": 59, "hard": 0, "easy_pct": 35, "mix": [7, 11, 2, 0], "cad": 80.6, "acwr_re": 0.0, "acwr_km": 0.0}], "run": [{"n": 3, "km": 29.5, "hrs": 2.66, "elev": 176, "re": 344, "days": 3, "weeks_active": 3, "wk_km": [10.0, 9.4, 10.0, 0.0], "wk_elev": [58, 65, 53, 0], "wk_re": [116, 70, 158, 0], "wk_n": [1, 1, 1, 0], "wk_hrs": [0.92, 0.95, 0.78, 0.0], "day_re": [0, 116, 0, 0, 0, 0, 0, 0, 70, 0, 0, 0, 0, 0, 0, 158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "wk_days": [1, 1, 1, 0], "cum": [0.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 19.5, 19.5, 19.5, 19.5, 19.5, 19.5, 19.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5], "kmh": 11.1, "pace": 325, "m_per_km": 6.0, "avg_km": 9.8, "longest": 10.0, "peak": 10.0, "avg_re": 114.7, "re_hr": 129, "hard": 2, "easy_pct": 0, "mix": [0, 0, 1, 2], "cad": 81.5, "acwr_re": 0.0, "acwr_km": 0.0, "sessions": [{"date": "2026-09-13", "hm": "08:43", "km": 10.02, "time": 3315, "pace": 331, "elev": 58, "re": 116}, {"date": "2026-09-20", "hm": "08:49", "km": 9.44, "time": 3431, "pace": 363, "elev": 65, "re": 70}, {"date": "2026-09-27", "hm": "08:24", "km": 10.01, "time": 2824, "pace": 282, "elev": 53, "re": 158}]}, {"n": 2, "km": 17.0, "hrs": 1.66, "elev": 121, "re": 217, "days": 2, "weeks_active": 2, "wk_km": [0.0, 7.0, 10.0, 0.0], "wk_elev": [0, 60, 61, 0], "wk_re": [0, 74, 143, 0], "wk_n": [0, 1, 1, 0], "wk_hrs": [0.0, 0.74, 0.92, 0.0], "day_re": [0, 0, 0, 0, 0, 0, 0, 0, 74, 0, 0, 0, 0, 0, 0, 143, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "wk_days": [0, 1, 1, 0], "cum": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0], "kmh": 10.2, "pace": 351, "m_per_km": 7.1, "avg_km": 8.5, "longest": 10.0, "peak": 10.0, "avg_re": 108.5, "re_hr": 130, "hard": 1, "easy_pct": 0, "mix": [0, 0, 1, 1], "cad": 80.0, "acwr_re": 0.0, "acwr_km": 0.0, "sessions": [{"date": "2026-08-23", "hm": "08:30", "km": 7.04, "time": 2664, "pace": 378, "elev": 60, "re": 74}, {"date": "2026-08-30", "hm": "08:30", "km": 10.01, "time": 3326, "pace": 332, "elev": 61, "re": 143}]}, {"n": 2, "km": 17.4, "hrs": 1.72, "elev": 98, "re": 127, "days": 2, "weeks_active": 2, "wk_km": [10.0, 0.0, 7.4, 0.0], "wk_elev": [66, 0, 32, 0], "wk_re": [73, 0, 54, 0], "wk_n": [1, 0, 1, 0], "wk_hrs": [0.99, 0.0, 0.72, 0.0], "day_re": [0, 73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "wk_days": [1, 0, 1, 0], "cum": [0.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 17.4, 17.4, 17.4, 17.4, 17.4, 17.4, 17.4, 17.4, 17.4, 17.4, 17.4, 17.4, 17.4], "kmh": 10.1, "pace": 356, "m_per_km": 5.6, "avg_km": 8.7, "longest": 10.0, "peak": 10.0, "avg_re": 63.5, "re_hr": 74, "hard": 0, "easy_pct": 0, "mix": [0, 0, 2, 0], "cad": 80.6, "acwr_re": 0.0, "acwr_km": 0.0, "sessions": [{"date": "2025-09-14", "hm": "08:30", "km": 10.01, "time": 3572, "pace": 357, "elev": 66, "re": 73}, {"date": "2025-09-28", "hm": "08:30", "km": 7.35, "time": 2606, "pace": 354, "elev": 32, "re": 54}]}], "ride": [{"n": 22, "km": 249.9, "hrs": 11.4, "elev": 3984, "re": 509, "days": 11, "weeks_active": 3, "wk_km": [95.0, 43.1, 111.9, 0.0], "wk_elev": [1567, 649, 1768, 0], "wk_re": [219, 92, 198, 0], "wk_n": [8, 4, 10, 0], "wk_hrs": [4.55, 1.81, 5.04, 0.0], "day_re": [0, 0, 0, 56, 51, 57, 55, 0, 0, 0, 0, 38, 0, 54, 0, 0, 43, 41, 40, 37, 37, 0, 0, 0, 0, 0, 0, 0], "wk_days": [4, 2, 5, 0], "cum": [0.0, 0.0, 0.0, 23.0, 46.4, 69.5, 95.0, 95.0, 95.0, 95.0, 95.0, 116.4, 116.4, 138.1, 138.1, 138.1, 161.4, 183.0, 204.9, 226.7, 249.9, 249.9, 249.9, 249.9, 249.9, 249.9, 249.9, 249.9], "kmh": 21.9, "pace": 164, "m_per_km": 15.9, "avg_km": 11.4, "longest": 14.0, "peak": 111.9, "avg_re": 23.1, "re_hr": 45, "hard": 0, "easy_pct": 50, "mix": [11, 11, 0, 0], "cad": null, "acwr_re": 0.0, "acwr_km": 0.0, "sessions": [{"date": "2026-09-15", "hm": "07:28", "km": 11.38, "time": 2042, "pace": 179, "elev": 249, "re": 40}, {"date": "2026-09-15", "hm": "17:27", "km": 11.63, "time": 1763, "pace": 152, "elev": 127, "re": 16}, {"date": "2026-09-16", "hm": "07:32", "km": 11.5, "time": 2079, "pace": 181, "elev": 249, "re": 39}, {"date": "2026-09-16", "hm": "17:27", "km": 11.93, "time": 1977, "pace": 166, "elev": 135, "re": 12}, {"date": "2026-09-17", "hm": "07:32", "km": 11.35, "time": 1928, "pace": 170, "elev": 243, "re": 41}, {"date": "2026-09-17", "hm": "18:02", "km": 11.71, "time": 1750, "pace": 149, "elev": 134, "re": 16}, {"date": "2026-09-18", "hm": "07:47", "km": 11.51, "time": 2077, "pace": 181, "elev": 252, "re": 40}, {"date": "2026-09-18", "hm": "17:31", "km": 13.97, "time": 2753, "pace": 197, "elev": 178, "re": 15}, {"date": "2026-09-23", "hm": "07:29", "km": 11.51, "time": 1885, "pace": 164, "elev": 244, "re": 28}, {"date": "2026-09-23", "hm": "18:23", "km": 9.95, "time": 1274, "pace": 128, "elev": 74, "re": 10}, {"date": "2026-09-25", "hm": "07:32", "km": 11.51, "time": 1878, "pace": 163, "elev": 246, "re": 46}, {"date": "2026-09-25", "hm": "17:39", "km": 10.13, "time": 1468, "pace": 145, "elev": 85, "re": 8}, {"date": "2026-09-28", "hm": "07:32", "km": 11.59, "time": 2089, "pace": 180, "elev": 249, "re": 33}, {"date": "2026-09-28", "hm": "17:56", "km": 11.76, "time": 1817, "pace": 155, "elev": 124, "re": 10}, {"date": "2026-09-29", "hm": "07:24", "km": 11.62, "time": 2054, "pace": 177, "elev": 244, "re": 34}, {"date": "2026-09-29", "hm": "20:07", "km": 9.96, "time": 1228, "pace": 123, "elev": 68, "re": 7}, {"date": "2026-09-30", "hm": "06:46", "km": 10.09, "time": 1630, "pace": 162, "elev": 228, "re": 29}, {"date": "2026-09-30", "hm": "16:33", "km": 11.81, "time": 1787, "pace": 151, "elev": 129, "re": 11}, {"date": "2026-10-01", "hm": "07:23", "km": 10.05, "time": 1804, "pace": 180, "elev": 224, "re": 24}, {"date": "2026-10-01", "hm": "18:16", "km": 11.72, "time": 1767, "pace": 151, "elev": 130, "re": 13}, {"date": "2026-10-02", "hm": "07:19", "km": 11.51, "time": 2121, "pace": 184, "elev": 249, "re": 27}, {"date": "2026-10-02", "hm": "17:06", "km": 11.75, "time": 1865, "pace": 159, "elev": 123, "re": 10}]}, {"n": 6, "km": 68.3, "hrs": 3.13, "elev": 1078, "re": 180, "days": 3, "weeks_active": 2, "wk_km": [0.0, 46.7, 21.5, 0.0], "wk_elev": [0, 733, 345, 0], "wk_re": [0, 105, 75, 0], "wk_n": [0, 4, 2, 0], "wk_hrs": [0.0, 2.17, 0.95, 0.0], "day_re": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 58, 0, 47, 0, 0, 0, 0, 0, 0, 0, 75, 0, 0, 0, 0, 0, 0, 0], "wk_days": [0, 2, 1, 0], "cum": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 23.4, 23.4, 46.7, 46.7, 46.7, 46.7, 46.7, 46.7, 46.7, 46.7, 68.3, 68.3, 68.3, 68.3, 68.3, 68.3, 68.3, 68.3], "kmh": 21.8, "pace": 165, "m_per_km": 15.8, "avg_km": 11.4, "longest": 11.8, "peak": 46.7, "avg_re": 30.0, "re_hr": 58, "hard": 0, "easy_pct": 33, "mix": [2, 3, 1, 0], "cad": null, "acwr_re": 0.0, "acwr_km": 0.0, "sessions": [{"date": "2026-08-25", "hm": "07:30", "km": 11.59, "time": 1956, "pace": 169, "elev": 239, "re": 38}, {"date": "2026-08-25", "hm": "17:45", "km": 11.81, "time": 1736, "pace": 147, "elev": 126, "re": 20}, {"date": "2026-08-27", "hm": "07:30", "km": 11.57, "time": 2403, "pace": 208, "elev": 244, "re": 30}, {"date": "2026-08-27", "hm": "17:45", "km": 11.78, "time": 1732, "pace": 147, "elev": 124, "re": 17}, {"date": "2026-09-04", "hm": "07:30", "km": 11.46, "time": 1919, "pace": 167, "elev": 258, "re": 58}, {"date": "2026-09-04", "hm": "17:45", "km": 10.05, "time": 1514, "pace": 151, "elev": 87, "re": 17}]}, {"n": 18, "km": 206.3, "hrs": 9.08, "elev": 3363, "re": 505, "days": 9, "weeks_active": 3, "wk_km": [90.8, 69.6, 45.9, 0.0], "wk_elev": [1454, 1153, 756, 0], "wk_re": [215, 177, 113, 0], "wk_n": [8, 6, 4, 0], "wk_hrs": [4.04, 3.05, 1.99, 0.0], "day_re": [0, 0, 59, 49, 0, 47, 60, 0, 0, 0, 69, 0, 49, 59, 0, 0, 0, 55, 0, 58, 0, 0, 0, 0, 0, 0, 0, 0], "wk_days": [4, 3, 2, 0], "cum": [0.0, 0.0, 23.1, 46.3, 46.3, 67.6, 90.8, 90.8, 90.8, 90.8, 114.1, 114.1, 137.3, 160.4, 160.4, 160.4, 160.4, 183.5, 183.5, 206.3, 206.3, 206.3, 206.3, 206.3, 206.3, 206.3, 206.3, 206.3], "kmh": 22.7, "pace": 158, "m_per_km": 16.3, "avg_km": 11.5, "longest": 11.8, "peak": 90.8, "avg_re": 28.1, "re_hr": 56, "hard": 0, "easy_pct": 39, "mix": [7, 11, 0, 0], "cad": null, "acwr_re": 0.0, "acwr_km": 0.0, "sessions": [{"date": "2025-09-15", "hm": "07:30", "km": 11.45, "time": 1892, "pace": 165, "elev": 251, "re": 48}, {"date": "2025-09-15", "hm": "17:45", "km": 11.66, "time": 1807, "pace": 155, "elev": 129, "re": 11}, {"date": "2025-09-16", "hm": "07:30", "km": 11.51, "time": 1974, "pace": 171, "elev": 243, "re": 34}, {"date": "2025-09-16", "hm": "17:45", "km": 11.68, "time": 1752, "pace": 150, "elev": 124, "re": 15}, {"date": "2025-09-18", "hm": "07:30", "km": 11.43, "time": 2046, "pace": 179, "elev": 251, "re": 36}, {"date": "2025-09-18", "hm": "17:45", "km": 9.89, "time": 1351, "pace": 137, "elev": 79, "re": 11}, {"date": "2025-09-19", "hm": "07:30", "km": 11.45, "time": 1917, "pace": 167, "elev": 245, "re": 44}, {"date": "2025-09-19", "hm": "17:45", "km": 11.7, "time": 1805, "pace": 154, "elev": 132, "re": 16}, {"date": "2025-09-23", "hm": "07:30", "km": 11.51, "time": 1971, "pace": 171, "elev": 254, "re": 46}, {"date": "2025-09-23", "hm": "17:45", "km": 11.77, "time": 1690, "pace": 144, "elev": 130, "re": 23}, {"date": "2025-09-25", "hm": "07:30", "km": 11.51, "time": 1921, "pace": 167, "elev": 254, "re": 37}, {"date": "2025-09-25", "hm": "17:45", "km": 11.71, "time": 1708, "pace": 146, "elev": 133, "re": 12}, {"date": "2025-09-26", "hm": "07:30", "km": 11.42, "time": 1959, "pace": 172, "elev": 256, "re": 37}, {"date": "2025-09-26", "hm": "17:45", "km": 11.74, "time": 1715, "pace": 146, "elev": 126, "re": 22}, {"date": "2025-09-30", "hm": "07:30", "km": 11.45, "time": 1920, "pace": 168, "elev": 253, "re": 43}, {"date": "2025-09-30", "hm": "17:45", "km": 11.66, "time": 1743, "pace": 149, "elev": 122, "re": 12}, {"date": "2025-10-02", "hm": "07:30", "km": 11.21, "time": 1826, "pace": 163, "elev": 250, "re": 45}, {"date": "2025-10-02", "hm": "17:45", "km": 11.58, "time": 1687, "pace": 146, "elev": 131, "re": 13}]}], "loops": [{"name": "Antibes AM loop", "dist_km": [11.0, 11.8], "elev_m": [235, 265], "t": [2017, 2093, 1936], "n": [9, 3, 9]}, {"name": "Valbonne PM loop", "dist_km": [11.5, 12.0], "elev_m": [118, 136], "t": [1818, 1734, 1738], "n": [7, 2, 8]}], "acwr": {"re": 0.0, "km": 0.0, "base": [{"short": "prev 4 wks", "re": 0.0, "km": 0.0}, {"short": "last year", "re": 0.0, "km": 0.0}]}, "flags": ["Previous 4 weeks / all: at least one week has no activity – baseline is uneven.", "Previous 4 weeks / all: one week is 63% of the block – baseline is lumpy.", "Same weeks last year / all: at least one week has no activity – baseline is uneven.", "Previous 4 weeks / run: only 2 session(s) – small sample, avoid strong conclusions.", "Same weeks last year / run: only 2 session(s) – small sample, avoid strong conclusions.", "Previous 4 weeks / ride: at least one week has no activity – baseline is uneven.", "Previous 4 weeks / ride: one week is 68% of the block – baseline is lumpy.", "Same weeks last year / ride: at least one week has no activity – baseline is uneven."]}, COACH={"run": ["<b>Frequency and volume:<\/b> you ran in all 4 weeks (vs 2 of 4 before and 3 of 4 last year). Total run distance is 39.5 km, +68% vs last year. Every run is capped at about 10 km.", "<b>Pace:<\/b> average pace is 5:26/km, 34 s/km faster than last year and 25 s/km faster than the previous block. Without the 27 Sept run (4:42), the other three average about 5:40, still about 20 s/km quicker than last year.", "<b>Intensity:<\/b> effort per hour is 138 vs 73 last year. Three of four runs scored 116 or more, so the Sunday run is a hard day every week.", "<b>Next steps:<\/b> add a short easy run midweek and make most Sunday runs easy; try a 12–14 km long run every 2–3 weeks in a lower-cycling week."], "ride": ["<b>Volume:<\/b> 315 km over 28 rides on 14 ride days, +25% vs last year with the same commute-style template.", "<b>Intensity is the weak spot:<\/b> effort per ride is 24 vs 28 last year and no ride scored above 48.", "<b>Same loops, slower:<\/b> the Antibes morning loop averages 33:27 vs 32:20 last year and the Valbonne evening loop 30:10 vs 29:04, both at lower effort. This fits fatigue from the added hard running but the data cannot prove the cause.", "<b>Next steps:<\/b> after an easier week add one 40–60 km easy endurance ride and one structured threshold session."], "overall": ["<b>Where you stand:<\/b> your biggest block of the three (+25% distance vs the previous 4 weeks, +28% vs last year), driven by consistency. The previous block is a lumpy baseline, so last year is the fairer yardstick.", "<b>Training load:<\/b> 54% low aerobic, 46% high aerobic and almost no anaerobic load (6 points). Rides supply 90% of the low aerobic load, but also 47% of the high aerobic load: the Antibes morning climbs spend time in Z3–Z4, so the commute is not purely easy. The hard running adds the rest of the high aerobic load, and no session reached Z5 (178+ bpm).", "<b>Risk and plan:<\/b> ACWR is 1.32 by effort and 1.57 by distance. Take an easier week next, then rebuild with one long easy ride, one structured ride and a Sunday run that is hard only every second week."]};
+const NS="http://www.w3.org/2000/svg",C={mut:"#8b94a3",line:"#262d38"},COL=["#4aa3ff","#a78bfa","#f5b942"],COLB=["#2866a8","#6d4fc2","#b8861c"];
+const $=id=>document.getElementById(id);
+const el=(p,t,a,txt)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;p.appendChild(e);return e};
+const clear=id=>{const s=$(id);while(s.firstChild)s.removeChild(s.firstChild);return s};
+const mmss=s=>{if(s==null)return"–";const r=Math.round(s);return Math.floor(r/60)+":"+String(r%60).padStart(2,"0")};
+const fT=s=>{const r=Math.round(s),h=Math.floor(r/3600);return h?h+":"+String(Math.floor(r%3600/60)).padStart(2,"0")+":"+String(r%60).padStart(2,"0"):mmss(r)};
+const fK=x=>x==null?"–":x.toFixed(1)+" km",fI=x=>x==null?"–":Math.round(x).toLocaleString("en-US"),fH=x=>x==null?"–":x.toFixed(1)+" h",
+  fM=x=>fI(x)+" m",fPace=x=>x?mmss(x)+" /km":"–",fSpd=x=>x?x.toFixed(1)+" km/h":"–",f1=x=>x==null?"–":x.toFixed(1);
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const dstr=d=>d.getUTCDate()+" "+MON[d.getUTCMonth()];
+const fDate=(d,hm)=>{const t=new Date(d+"T00:00:00Z");return dstr(t)+(hm?" · "+(+hm.slice(0,2)<12?"AM":"PM"):"")};
+const A=DATA.all,R=DATA.run,B=DATA.ride,PD=DATA.periods,HARD=DATA.config.hard,ED=DATA.config.edges;
+const LC={ana:"#ff6b81",high:"#ffa94d",low:"#38d9a9"},LN={ana:"Anaerobic",high:"High aerobic",low:"Low aerobic"};
+const ST={sport:"all",hidden:new Set(),week:null,hp:0,hm:"km"};
+const vis=()=>PD.map((_,k)=>k).filter(k=>!ST.hidden.has(k));
+const SRC=()=>({all:A,run:R,ride:B})[ST.sport];
+const dot=k=>`<span style="color:${COL[k]}">●</span> `,fv=v=>v==null?"–":(Math.round(v*10)/10).toLocaleString("en-US");
+
+/* ---------- gradients, motion ---------- */
+(function(){const g=$("gd");
+  COL.forEach((c,k)=>{
+    const b=el(g,"linearGradient",{id:"gb"+k,x1:0,y1:0,x2:0,y2:1});el(b,"stop",{offset:"0%","stop-color":c});el(b,"stop",{offset:"100%","stop-color":COLB[k]});
+    const a=el(g,"linearGradient",{id:"ga"+k,x1:0,y1:0,x2:0,y2:1});el(a,"stop",{offset:"0%","stop-color":c,"stop-opacity":.32});el(a,"stop",{offset:"100%","stop-color":c,"stop-opacity":0});
+  });
+  for(const c in LC){const b=el(g,"linearGradient",{id:"gl"+c,x1:0,y1:0,x2:0,y2:1});el(b,"stop",{offset:"0%","stop-color":LC[c]});el(b,"stop",{offset:"100%","stop-color":LC[c],"stop-opacity":.7})}
+})();
+const reduce=!!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches);
+const io=window.IntersectionObserver?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.remove("pre");io.unobserve(e.target)}}),{threshold:.1}):null;
+function arm(s,anim){
+  s.classList.add("anim");s.classList.remove("pre","static");
+  if(!anim||reduce||!io){s.classList.add("static");return}
+  s.classList.add("pre");io.observe(s);setTimeout(()=>s.classList.remove("pre"),4000);
+}
+
+/* ---------- tooltip ---------- */
+const tip=$("tip");
+function showTip(e,h){tip.innerHTML=h;tip.style.display="block";tip.style.left=Math.min(e.pageX+14,innerWidth-250)+"px";tip.style.top=e.pageY+14+"px"}
+const hideTip=()=>{tip.style.display="none"};
+function hover(svg,n,xOf,rows,y1,y2){
+  const g=el(svg,"line",{y1,y2,stroke:"#8b94a3","stroke-dasharray":"3 3",visibility:"hidden",style:"pointer-events:none"});
+  svg.onmousemove=e=>{
+    const r=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal,x=(e.clientX-r.left)/r.width*vb.width;
+    let b=0,bd=1e9;for(let i=0;i<n;i++){const d=Math.abs(xOf(i)-x);if(d<bd){bd=d;b=i}}
+    const h=rows(b);if(!h){hideTip();return}
+    g.setAttribute("x1",xOf(b));g.setAttribute("x2",xOf(b));g.setAttribute("visibility","visible");showTip(e,h);
+  };
+  svg.onmouseleave=()=>{hideTip();g.setAttribute("visibility","hidden")};
+}
+const tipRows=(head,vals,i,fmt)=>`<b>${head}</b>`+vis().map(k=>vals[k][i]==null?"":`<br>${dot(k)}${PD[k].name}: <b>${(fmt||fv)(vals[k][i])}</b>`).join("");
+
+/* ---------- geometry helpers ---------- */
+function prep(id,need,base){
+  const s=$(id),H=s.getAttribute("viewBox").split(" ")[3];
+  if(need<=base)return base;
+  s.setAttribute("viewBox",`0 0 ${need} ${H}`);s.style.width=(need/base*100)+"%";s.style.maxWidth="none";
+  if(s.parentNode.className!=="scroll"){const box=document.createElement("div");box.className="scroll";s.parentNode.insertBefore(box,s);box.appendChild(s)}
+  const h=s.closest(".card").querySelector("h3");if(h&&!h.querySelector(".hint"))h.insertAdjacentHTML("beforeend",'<span class="hint">← scroll →</span>');
+  return need;
+}
+function mono(p){ /* monotone cubic path through points (no overshoot) */
+  const n=p.length,dx=[],m=[],t=[];
+  for(let i=0;i<n-1;i++){dx[i]=p[i+1][0]-p[i][0];m[i]=(p[i+1][1]-p[i][1])/(dx[i]||1)}
+  t[0]=m[0];t[n-1]=m[n-2];for(let i=1;i<n-1;i++)t[i]=m[i-1]*m[i]<=0?0:(m[i-1]+m[i])/2;
+  for(let i=0;i<n-1;i++){if(m[i]===0){t[i]=t[i+1]=0;continue}const a=t[i]/m[i],b=t[i+1]/m[i],h=Math.hypot(a,b);if(h>3){const k=3/h;t[i]=k*a*m[i];t[i+1]=k*b*m[i]}}
+  let d=`M${p[0][0]},${p[0][1]}`;
+  for(let i=0;i<n-1;i++){const h=dx[i]/3;d+=`C${p[i][0]+h},${p[i][1]+t[i]*h} ${p[i+1][0]-h},${p[i+1][1]-t[i+1]*h} ${p[i+1][0]},${p[i+1][1]}`}
+  return d;
+}
+function drawLine(s,pts,k,o){
+  if(pts.length<2)return;
+  const c=o.color||COL[k],d=pts.length>2&&pts.length<=400?mono(pts):"M"+pts.map(p=>p.join(",")).join("L");
+  if(o.area)el(s,"path",{d:d+`L${pts[pts.length-1][0]},${o.base}L${pts[0][0]},${o.base}Z`,fill:o.grad||`url(#ga${k})`,class:"area"});
+  el(s,"path",{d,fill:"none",stroke:c,"stroke-width":o.w||2,"stroke-linecap":"round","stroke-linejoin":"round",pathLength:1,class:"draw"+(o.glow?" glow":""),style:`color:${c}`});
+}
+
+/* ---------- charts ---------- */
+function bars(id,vals,labels,fmt,anim,opt){
+  opt=opt||{};
+  const s=clear(id),ks=vis(),P=ks.length,G=labels.length;if(!G||!P)return;
+  const fit=G*(P*9+6)+24<=400,Wd=prep(id,fit?0:G*(P*18+12)+24,400);
+  const mx=Math.max(1,...ks.flatMap(k=>vals[k].filter(v=>v!=null))),gw=(Wd-24)/G,bw=Math.min(25,(gw-8)/P-2);
+  const lab=bw>=16?ks.map((_,j)=>j):(gw>=30?[0]:[]),sel=opt.week?ST.week:null;
+  for(let g=0;g<G;g++){
+    const dim=sel!=null&&g!==sel;
+    ks.forEach((k,j)=>{const v=vals[k][g];if(v==null)return;
+      const h=v/mx*150,x=14+g*gw+(gw-P*bw-(P-1)*2)/2+j*(bw+2);
+      el(s,"rect",{x,y:200-h,width:bw,height:h,fill:`url(#gb${k})`,rx:3,class:"b",style:`--i:${g};opacity:${dim?.28:1}`});
+      if(lab.includes(j))el(s,"text",{x:x+bw/2,y:195-h,fill:C.mut,"font-size":bw<20?8:9,"text-anchor":"middle",opacity:dim?.4:1},Math.round(v*10)/10);
+    });
+    el(s,"text",{x:14+g*gw+gw/2,y:220,fill:sel===g?"#fff":C.mut,"font-size":gw<40?9:11,"font-weight":sel===g?700:400,"text-anchor":"middle"},labels[g]);
+    if(opt.week){const r=el(s,"rect",{x:14+g*gw,y:20,width:gw,height:200,fill:"transparent",style:"cursor:pointer"});r.onclick=()=>selectWeek(g)}
+  }
+  el(s,"line",{x1:10,x2:Wd-10,y1:200,y2:200,stroke:C.line});
+  hover(s,G,g=>14+g*gw+gw/2,i=>tipRows(labels[i],vals,i,fmt)+(opt.week?'<br><span style="color:#8b94a3">click to highlight this week</span>':""),30,200);
+  arm(s,anim);
+}
+function cumLines(id,series,anim){
+  const s=clear(id),ks=vis();if(!ks.length)return;
+  const L=44,Rr=690,T=14,Bt=205,n=series[0].length,mx=Math.max(1,...ks.flatMap(k=>series[k]));
+  const step=[5,10,20,25,40,50,80,100,200,250,400,500,750,1000,1500,2000,2500,5000].find(x=>x*4>=mx)||Math.ceil(mx/400)*100,top=step*4;
+  const X=i=>L+(Rr-L)*i/Math.max(n-1,1),Y=v=>Bt-(Bt-T)*v/top;
+  for(let i=0;i<=4;i++){el(s,"line",{x1:L,x2:Rr,y1:Y(step*i),y2:Y(step*i),stroke:C.line});el(s,"text",{x:L-6,y:Y(step*i)+4,fill:C.mut,"font-size":11,"text-anchor":"end"},step*i)}
+  if(ST.week!=null){const a=ST.week*7,b=Math.min(a+7,n-1);el(s,"rect",{x:X(a),y:T,width:Math.max(X(b)-X(a),2),height:Bt-T,fill:"#ffffff14",rx:3})}
+  [...new Set([0,.25,.5,.75,1].map(f=>Math.round((n-1)*f)))].forEach(i=>el(s,"text",{x:X(i),y:226,fill:C.mut,"font-size":11,"text-anchor":i===n-1&&n>1?"end":"middle"},"Day "+(i+1)));
+  ks.slice().reverse().forEach(k=>{
+    drawLine(s,series[k].map((v,i)=>[X(i),Y(v)]),k,{area:k===ks[0],base:Bt,glow:k===ks[0],w:k===ks[0]?3:2});
+    el(s,"text",{x:Rr,y:Y(series[k][n-1])+(k===ks[0]?-9:18),fill:COL[k],"font-size":12,"text-anchor":"end"},series[k][n-1]+" km");
+  });
+  const d0=new Date(PD[0].start+"T00:00:00Z");
+  hover(s,n,X,i=>tipRows("Day "+(i+1)+" · "+dstr(new Date(d0.getTime()+i*864e5)),series,i,v=>v.toFixed(1)+" km"),T,Bt);
+  arm(s,anim);
+}
+function paceChart(id,series,anim){
+  const s=clear(id),ks=vis(),all=ks.flatMap(k=>series[k]);if(!all.length)return;
+  const n=Math.max(...ks.map(k=>series[k].length)),Wd=prep(id,n*34+110,700),lo=Math.min(...all)-20,hi=Math.max(...all)+20,L=50,Rr=Wd-60;
+  const Y=p=>30+(p-lo)/(hi-lo)*165,X=i=>L+(n>1?i*(Rr-L)/(n-1):(Rr-L)/2);
+  for(let i=0;i<4;i++){const p=lo+(hi-lo)*i/3;el(s,"line",{x1:L-10,x2:Rr+20,y1:Y(p),y2:Y(p),stroke:C.line});el(s,"text",{x:L-16,y:Y(p)+4,fill:C.mut,"font-size":11,"text-anchor":"end"},mmss(p))}
+  const st=n>20?1:Math.ceil(n/10),many=n>12;
+  for(let i=0;i<n;i+=st)el(s,"text",{x:X(i),y:240,fill:C.mut,"font-size":n>20?9:11,"text-anchor":"middle"},n>20?i+1:"Run "+(i+1));
+  ks.slice().reverse().forEach(k=>{
+    const a=series[k];drawLine(s,a.map((p,i)=>[X(i),Y(p)]),k,{area:false,glow:k===ks[0],w:2.5});
+    a.forEach((p,i)=>{el(s,"circle",{cx:X(i),cy:Y(p),r:many?2.5:5,fill:COL[k]});if(!many)el(s,"text",{x:X(i)+(k===ks[0]?0:10),y:Y(p)+(k===ks[0]?-11:17),fill:COL[k],"font-size":10,"text-anchor":"middle"},mmss(p))});
+  });
+  hover(s,n,X,i=>tipRows("Run "+(i+1),series,i,p=>mmss(p)+" /km"),20,205);
+  arm(s,anim);
+}
+function spark(id,arr,color){
+  const s=$(id);if(!s||!arr||arr.length<2)return;
+  const W=120,H=30,mn=Math.min(...arr),mx=Math.max(...arr),rg=mx-mn||1;
+  const pts=arr.map((v,i)=>[2+(W-4)*i/(arr.length-1),H-3-(v-mn)/rg*(H-8)]);
+  const gr=el(el(s,"defs",{}),"linearGradient",{id:id+"g",x1:0,y1:0,x2:0,y2:1});
+  el(gr,"stop",{offset:"0%","stop-color":color,"stop-opacity":.4});el(gr,"stop",{offset:"100%","stop-color":color,"stop-opacity":0});
+  drawLine(s,pts,0,{area:true,base:H,color:color,grad:`url(#${id}g)`,w:1.8});
+  arm(s,true);
+}
+function donut(svg,parts,top,bot,anim){
+  const r=46,cx=60,cy=60,tot=parts.reduce((a,p)=>a+p.v,0)||1;let acc=0;
+  el(svg,"circle",{cx,cy,r,fill:"none",stroke:"#262d38","stroke-width":14});
+  parts.forEach(p=>{
+    const f=p.v/tot*100,len=Math.max(f-1.2,.01);
+    const c=el(svg,"circle",{cx,cy,r,fill:"none",stroke:p.c,"stroke-width":14,pathLength:100,"stroke-dasharray":`${len} ${100-len}`,"stroke-dashoffset":-(acc+.6),transform:`rotate(-90 ${cx} ${cy})`,class:"dseg"});
+    acc+=f;c.onmousemove=e=>showTip(e,`<b>${p.n}</b><br>${p.v.toLocaleString("en-US")} pts · <b>${Math.round(f)}%</b>`);c.onmouseleave=hideTip;
+  });
+  el(svg,"text",{x:cx,y:cy-1,"text-anchor":"middle",fill:"#fff","font-size":17,"font-weight":700},top);
+  el(svg,"text",{x:cx,y:cy+14,"text-anchor":"middle",fill:C.mut,"font-size":9},bot);
+  arm(svg,anim);
+}
+
+/* ---------- calendar heatmap ---------- */
+const RAMP={blue:["#16314d","#1d4f80","#2a73b8","#3b94e8","#7cc0ff"],run:["#4a2a1a","#7a3d1d","#b4531f","#ee6f2d","#ffb48a"]};
+function heat(anim){
+  const k=ST.hp,m=SRC()[k],P=PD[k],n=DATA.days,s=clear("heat"),W=Math.ceil(n/7);
+  const dayKm=i=>+(m.cum[i]-(i?m.cum[i-1]:0)).toFixed(1),daily=ST.hm==="km"?m.cum.map((_,i)=>dayKm(i)):m.day_re;
+  const st=new Date(P.start+"T00:00:00Z"),sd=st.getUTCDay(),mx=Math.max(1,...daily),ramp=ST.sport==="run"?RAMP.run:RAMP.blue,sel=ST.week;
+  const lvl=v=>v>0?Math.min(4,Math.floor(v/mx*5)):-1,fill=v=>v>0?ramp[lvl(v)]:"#1a212c";
+  const dayOf=i=>new Date(st.getTime()+i*864e5);
+  const mk=(i,x,y,w,h,r,txt)=>{
+    const v=daily[i]||0,wk=Math.floor(i/7),hl=sel!=null&&wk===sel,d=dayOf(i);
+    const rc=el(s,"rect",{x,y,width:w,height:h,rx:r,fill:fill(v),class:"cell",style:`--c:${wk+(i%7)/7};opacity:${sel!=null&&!hl?.35:1};cursor:pointer`,stroke:hl?"#fff":"none","stroke-width":hl?1.4:0});
+    if(txt){el(s,"text",{x:x+5,y:y+11,fill:v>0&&lvl(v)>=3?"#0e1116":C.mut,"font-size":8,"pointer-events":"none",opacity:sel!=null&&!hl?.4:1},d.getUTCDate());
+      if(v>0)el(s,"text",{x:x+w/2,y:y+h-9,fill:lvl(v)>=3?"#0e1116":"#fff","font-size":11,"font-weight":700,"text-anchor":"middle","pointer-events":"none",opacity:sel!=null&&!hl?.4:1},Math.round(v*10)/10)}
+    rc.onmousemove=e=>showTip(e,`<b>${DOW[d.getUTCDay()]} ${dstr(d)}</b><br>${dayKm(i).toFixed(1)} km · effort ${m.day_re[i]}<br><span style="color:#8b94a3">${DATA.week_labels[wk]} · click to highlight</span>`);
+    rc.onmouseleave=hideTip;rc.onclick=()=>selectWeek(wk);
+  };
+  if(W<=8){ /* short window: one row per week, one column per weekday */
+    const CW=54,CH=36,L=84,T=26,Wd=L+7*(CW+4)+6,Ht=T+W*(CH+4)+6;
+    s.setAttribute("viewBox",`0 0 ${Wd} ${Ht}`);s.style.width=Math.round(Wd*1.15)+"px";s.style.maxWidth="100%";
+    for(let j=0;j<7;j++)el(s,"text",{x:L+j*(CW+4)+CW/2,y:T-9,fill:C.mut,"font-size":10,"text-anchor":"middle"},DOW[(sd+j)%7]);
+    for(let r=0;r<W;r++){
+      const d=dayOf(r*7);
+      el(s,"text",{x:L-10,y:T+r*(CH+4)+CH/2-1,fill:ST.week===r?"#fff":C.mut,"font-size":10,"font-weight":ST.week===r?700:400,"text-anchor":"end"},DATA.week_labels[r]);
+      el(s,"text",{x:L-10,y:T+r*(CH+4)+CH/2+11,fill:"#6b7686","font-size":9,"text-anchor":"end"},dstr(d));
+    }
+    for(let i=0;i<n;i++)mk(i,L+(i%7)*(CW+4),T+Math.floor(i/7)*(CH+4),CW,CH,7,true);
+  }else{ /* long window: one column per week, GitHub style */
+    const CS=15,step=18,L=34,T=22,need=L+W*step+12;
+    if(need<=700){s.setAttribute("viewBox",`0 0 ${need} 170`);s.style.width=Math.round(need*1.3)+"px";s.style.maxWidth="100%"}else prep("heat",need,700);
+    [0,2,4].forEach(j=>el(s,"text",{x:L-6,y:T+j*step+CS-3,fill:C.mut,"font-size":9,"text-anchor":"end"},DOW[(sd+j)%7]));
+    let lastM=-1;
+    for(let c=0;c<W;c++){const d=dayOf(c*7);if(d.getUTCMonth()!==lastM){lastM=d.getUTCMonth();el(s,"text",{x:L+c*step,y:T-8,fill:C.mut,"font-size":10},MON[lastM])}}
+    for(let i=0;i<n;i++)mk(i,L+Math.floor(i/7)*step,T+(i%7)*step,CS,CS,3,false);
+  }
+  $("heatLeg").innerHTML=`Less ${["#1a212c"].concat(ramp).map(c=>`<span class="sw" style="background:${c}"></span>`).join("")} More · ${ST.hm==="km"?"km per day":"relative effort per day"} · ${P.label}`;
+  arm(s,anim);
+}
+
+/* ---------- KPI specs, deltas, tables, tiles ---------- */
+const S=(l,k,f,d,g,x)=>Object.assign({l,k,f,d,g},x||{});
+const val=(sp,M,k)=>sp.val?sp.val(k):M[k][sp.k];
+function delta(sp,a,b){
+  if(a==null||b==null)return null;
+  let diff,txt;
+  if(sp.d==="pct"){if(!b)return null;diff=Math.round((a/b-1)*100);txt=Math.abs(diff)+"%"}
+  else{diff=sp.fd?Math.round(a-b):+(a-b).toFixed(sp.dec||0);const m=Math.abs(diff);txt=sp.fd?sp.fd(m):m.toFixed(sp.dec||0)+(sp.u||"")}
+  return{mag:txt,txt:(diff>0?"+":diff<0?"−":"")+txt,arrow:diff>0?"▲":diff<0?"▼":"•",cls:diff&&sp.g?(diff*sp.g>0?"pos":"neg"):""};
+}
+function table(headId,bodyId,specs,M){
+  $(headId).innerHTML=`<tr><th>Metric</th><th class="n" style="color:${COL[0]}">${PD[0].name}</th>`+PD.slice(1).map((p,i)=>`<th class="n" style="color:${COL[i+1]}">${p.name}</th><th class="n">Δ</th>`).join("")+"</tr>";
+  $(bodyId).innerHTML=specs.map(sp=>{
+    const f=sp.f||(x=>x),v=PD.map((_,k)=>val(sp,M,k));
+    return`<tr><td>${sp.l}</td><td class="n"><b>${f(v[0])}</b></td>`+v.slice(1).map(x=>{const d=delta(sp,v[0],x);return`<td class="n">${f(x)}</td><td class="n ${d?d.cls:""}">${d?d.txt:""}</td>`}).join("")+"</tr>"}).join("");
+}
+function tiles(id,specs,M){
+  $(id).innerHTML=specs.map((sp,i)=>{
+    const f=sp.f||(x=>x),v=val(sp,M,0);
+    const ch=PD.slice(1).map((p,j)=>{const d=delta(sp,v,val(sp,M,j+1));return d?`<span class="chip ${d.cls}">${d.arrow} ${d.mag} vs ${p.short}</span>`:""}).join("");
+    return`<div class="card stat"><b>${f(v)}</b><span class="l">${sp.tl||sp.l}</span>${ch}${sp.sp?`<svg class="spark" id="sp-${id}-${i}" viewBox="0 0 120 30"></svg>`:""}</div>`}).join("");
+  specs.forEach((sp,i)=>{if(sp.sp)spark(`sp-${id}-${i}`,sp.sp(M[0]),COL[0])});
+}
+const ses=(M,f)=>M.sessions.map(f);
+
+/* ---------- static content (built once) ---------- */
+document.title=DATA.title;$("title").textContent=DATA.title;
+$("sub").textContent=`${DATA.days} days per period (${DATA.weeks} weeks, 7-day blocks from each period's start${DATA.partial_days?"; * = partial last week of "+DATA.partial_days+" days":""}) · runs and rides only · generated ${DATA.generated} · source: Strava. Click a legend pill to hide a period, a bar or calendar cell to highlight a week.`;
+$("flags").innerHTML=(DATA.flags||[]).map(f=>`<li>${f}</li>`).join("");
+
+const gs=[S("Distance","km",fK,"pct",1,{sp:m=>m.wk_km}),S("Elevation gain","elev",fM,"pct",1,{sp:m=>m.wk_elev}),S("Moving time","hrs",fH,"pct",1,{sp:m=>m.wk_hrs}),
+  S("Relative effort","re",fI,"pct",1,{sp:m=>m.wk_re}),S("Active days","days",x=>x+" of "+DATA.days,"abs",1,{sp:m=>m.wk_days})];
+tiles("gTiles",gs,A);
+const ac=DATA.acwr,fa=x=>x==null?"–":x.toFixed(2);
+$("gTiles").insertAdjacentHTML("beforeend",`<div class="card stat"><b style="color:${ac.re>1.3?"#f5b942":"inherit"}">${fa(ac.re)}</b><span class="l">ACWR (effort)</span>${ac.re==null?'<span class="chip">needs 4+ full weeks</span>':`<span class="chip">${fa(ac.km)} by distance</span>`+ac.base.map(b=>`<span class="chip">${b.short}: ${fa(b.re)}</span>`).join("")}</div>`);
+const pc=(a,b)=>b?Math.round(100*a/b):0,sh=[["Distance",pc(R[0].km,A[0].km)],["Moving time",pc(R[0].hrs,A[0].hrs)],["Relative effort",pc(R[0].re,A[0].re)]];
+$("share").innerHTML=sh.map(r=>`<div>${r[0]}<div class="bar"><div style="width:${r[1]}%;background:var(--run)">${r[1]}%</div><div style="width:${100-r[1]}%;background:var(--ride)">${100-r[1]}%</div></div></div>`).join("")+`<div class="note"><span style="color:var(--run)">■</span> Run &nbsp; <span style="color:var(--ride)">■</span> Ride</div>`;
+
+const rs={km:S("Distance","km",fK,"pct",1,{tl:"Run distance",sp:m=>m.wk_km}),n:S("Runs","n",fI,"abs",1,{sp:m=>m.wk_n}),wa:S("Weeks with a run","weeks_active",x=>x+" / "+DATA.weeks,"abs",1),
+  avg_km:S("Avg run length","avg_km",fK,"pct",1),longest:S("Longest run","longest",fK,"abs",0,{dec:1,u:" km"}),hrs:S("Moving time","hrs",fH,"pct",1),
+  pace:S("Avg pace","pace",fPace,"abs",-1,{fd:x=>x+" s",sp:m=>ses(m,s=>-s.pace)}),avg_re:S("Avg effort per run","avg_re",fI,"pct",0,{sp:m=>ses(m,s=>s.re)}),re_hr:S("Effort per hour","re_hr",fI,"pct",0),
+  hard:S(`Hard runs (effort ≥ ${HARD})`,"hard",fI,"abs",0,{tl:"Hard runs",sp:m=>ses(m,s=>s.re)}),elev:S("Elevation gain","elev",fM,"pct",1),cad:S("Avg cadence","cad",f1,"abs",1,{dec:1,tl:"Avg cadence (Strava)"})};
+tiles("rTiles",[rs.km,rs.n,rs.pace,rs.avg_re,rs.hard,rs.cad],R);
+table("rHead","rCmp",Object.values(rs),R);
+const rl=R[0].sessions,rshow=rl.length>10;if(rshow)$("rTitle").textContent=`Most recent runs (10 of ${rl.length})`;
+$("rRows").innerHTML=(rshow?rl.slice(-10).reverse():rl).map(s=>`<tr><td>${fDate(s.date,s.hm)}</td><td class="n">${s.km.toFixed(2)} km</td><td class="n">${mmss(s.pace)} /km</td><td class="n">${fT(s.time)}</td><td class="n">${s.elev} m</td><td class="n">${s.re}</td></tr>`).join("");
+
+const bs={km:S("Distance","km",fK,"pct",1,{tl:"Ride distance",sp:m=>m.wk_km}),n:S("Rides","n",fI,"abs",1,{sp:m=>m.wk_n}),days:S("Ride days","days",fI,"abs",1),hrs:S("Moving time","hrs",fH,"pct",1),
+  elev:S("Elevation gain","elev",fM,"pct",1,{sp:m=>m.wk_elev}),mpk:S("Climbing density","m_per_km",x=>f1(x)+" m/km","pct",0),kmh:S("Avg speed","kmh",fSpd,"abs",1,{dec:1,sp:m=>ses(m,s=>s.km/(s.time/3600))}),
+  avg_km:S("Avg ride length","avg_km",fK,"pct",0),longest:S("Longest ride","longest",fK,"abs",0,{dec:1,u:" km",sp:m=>ses(m,s=>s.km)}),peak:S("Peak week","peak",fK,"pct",0),
+  re:S("Relative effort","re",fI,"pct",1),avg_re:S("Avg effort per ride","avg_re",fI,"pct",1,{sp:m=>ses(m,s=>s.re)}),re_hr:S("Effort per hour","re_hr",fI,"pct",1),
+  hard:S(`Hard rides (effort ≥ ${HARD})`,"hard",fI,"abs",0),easy:S(`Easy rides (effort < ${ED[0]})`,"easy_pct",x=>x==null?"–":x+"%","abs",0,{u:" pts"})};
+tiles("bTiles",[bs.km,bs.n,bs.elev,bs.kmh,bs.avg_re,bs.longest],B);
+const loops=(DATA.loops||[]).map(l=>S(l.name+" · avg time","",mmss,"abs",-1,{fd:mmss,val:k=>l.t[k]}));
+table("bHead","bCmp",Object.values(bs).concat(loops),B);
+$("bNote").textContent=`Hard ride = relative effort ≥ ${HARD}. `+(DATA.loops||[]).map(l=>`${l.name}: rides of ${l.dist_km[0]}–${l.dist_km[1]} km and ${l.elev_m[0]}–${l.elev_m[1]} m climb (n = ${l.n.join(" / ")}).`).join(" ");
+$("bRows").innerHTML=B[0].sessions.slice(-8).reverse().map(s=>`<tr><td>${fDate(s.date,s.hm)}</td><td class="n">${s.km.toFixed(2)} km</td><td class="n">${fT(s.time)}</td><td class="n">${(s.km/(s.time/3600)).toFixed(1)} km/h</td><td class="n">${s.elev} m</td><td class="n">${s.re}</td></tr>`).join("");
+
+function coach(id,title,items){const c=$(id);if(!items||!items.length){c.style.display="none";return}c.innerHTML=`<h3>${title}</h3><ul>${items.map(x=>`<li>${x}</li>`).join("")}</ul>`}
+coach("cRun","Coach's read · running",COACH.run);coach("cRide","Coach's read · cycling",COACH.ride);coach("cAll","Coach's overall read",COACH.overall);
+
+/* ---------- training load card ---------- */
+function drawLoad(anim){
+  const L=DATA.load;if(!L||!L.periods[0])return;
+  const m=L.periods[0],Z=L.zones[0],cats=L.categories,LB=L.labels;
+  const bpm=zs=>{const lo=Z[zs[0]-1],last=zs[zs.length-1];if(last>=5)return lo+"+ bpm";const hi=Z[last]-1;return lo===0?"< "+(hi+1)+" bpm":lo+"–"+hi+" bpm"};
+  const zl=zs=>"Z"+zs[0]+(zs.length>1?"–"+zs[zs.length-1]:"");
+  $("loadCard").style.display="";
+  if(L.restricted)$("loadTitle").textContent=`Training load by intensity · last ${L.weeks} weeks`;
+  const dn=clear("donut");
+  donut(dn,["ana","high","low"].map(c=>({v:m.cat[c].pts,c:LC[c],n:LN[c]})),m.total.toLocaleString("en-US"),"load pts",anim);
+  $("loadRows").innerHTML=["ana","high","low"].map(c=>{
+    const v=m.cat[c],r=m.sport.run[c],b=m.sport.ride[c],sp=r+b?`run ${Math.round(100*r/(r+b))}% / ride ${Math.round(100*b/(r+b))}%`:"–";
+    const ch=PD.slice(1).map((p,i)=>{const o=L.periods[i+1];if(!o||!o.cat[c].pts)return"";const d=Math.round((v.pts/o.cat[c].pts-1)*100);return`<span class="chip">${d>0?"▲":d<0?"▼":"•"} ${Math.abs(d)}% vs ${p.short}</span>`}).join("");
+    return`<div class="lrow"><div class="lhead"><span><i style="background:${LC[c]}"></i><b>${LN[c]}</b><small>${zl(cats[c])} · ${bpm(cats[c])}</small></span><span><b>${v.pts.toLocaleString("en-US")}</b> pts · ${v.share}%</span></div>
+      <div class="lbar"><div style="width:${v.pts?Math.max(v.share,1):0}%;background:${LC[c]}"></div></div>
+      <div class="lsub">${v.min.toLocaleString("en-US")} min · ${sp}${ch}</div></div>`}).join("");
+  const nw=LB.length,Wd=prep("loadW",nw*38+30,400),s=clear("loadW"),tot=m.wk.low.map((_,w)=>m.wk.low[w]+m.wk.high[w]+m.wk.ana[w]),mx=Math.max(1,...tot),gw=(Wd-30)/nw,bw=Math.min(56,gw-(nw>20?1:8));
+  const sel=L.restricted?null:ST.week;
+  for(let w=0;w<nw;w++){
+    let y=200;const x=15+w*gw+(gw-bw)/2,dim=sel!=null&&w!==sel;
+    ["low","high","ana"].forEach(c=>{const h=m.wk[c][w]/mx*150;if(h>0){el(s,"rect",{x,y:y-h,width:bw,height:h,fill:`url(#gl${c})`,rx:nw>20?0:2,class:"b",style:`--i:${w};opacity:${dim?.28:1}`});y-=h}});
+    if(bw>=24)el(s,"text",{x:x+bw/2,y:y-5,fill:C.mut,"font-size":nw>8?9:11,"text-anchor":"middle",opacity:dim?.4:1},tot[w].toLocaleString("en-US"));
+    el(s,"text",{x:x+bw/2,y:220,fill:sel===w?"#fff":C.mut,"font-size":gw<40?9:11,"text-anchor":"middle"},LB[w]);
+    if(!L.restricted){const r=el(s,"rect",{x:15+w*gw,y:20,width:gw,height:200,fill:"transparent",style:"cursor:pointer"});r.onclick=()=>selectWeek(w)}
+  }
+  el(s,"line",{x1:20,x2:Wd-10,y1:200,y2:200,stroke:C.line});
+  hover(s,nw,w=>15+w*gw+gw/2,w=>`<b>${LB[w]}</b>`+["ana","high","low"].map(c=>`<br><span style="color:${LC[c]}">●</span> ${LN[c]}: <b>${m.wk[c][w].toLocaleString("en-US")}</b> pts`).join("")+`<br>Total: <b>${tot[w].toLocaleString("en-US")}</b> pts`,30,200);
+  arm(s,anim);
+  $("loadLeg").innerHTML=["ana","high","low"].map(c=>`<span><i style="background:${LC[c]}"></i>${LN[c]}</span>`).join("")+"<span>· weekly load points</span>";
+  $("loadNote").textContent=`Load points = minutes in each HR zone × zone weight (Z1–Z5 = ${L.weights.join("/")}). Zone lower bounds: ${Z.join(" / ")} bpm. HR data for ${m.cov} of ${m.n} runs and rides, about 50 samples per session, so short spikes can be missed.`;
+}
+
+/* ---------- interaction ---------- */
+function selectWeek(w){ST.week=ST.week===w?null:w;weekChip();render("")}
+function weekChip(){
+  const c=$("weekChip");if(ST.week==null){c.style.display="none";return}
+  const w=ST.week,a=new Date(PD[0].start+"T00:00:00Z"),b0=new Date(a.getTime()+w*7*864e5),b1=new Date(Math.min(b0.getTime()+6*864e5,new Date(PD[0].end+"T00:00:00Z").getTime()));
+  c.style.display="inline-block";
+  c.innerHTML=`<b>${DATA.week_labels[w]}</b> · ${dstr(b0)} – ${dstr(b1)} · ${fK(A[0].wk_km[w])} · effort ${fI(A[0].wk_re[w])} · ${A[0].wk_days[w]} active days (run ${fK(R[0].wk_km[w])}, ride ${fK(B[0].wk_km[w])})<button id="wkClear">clear</button>`;
+}
+$("weekChip").onclick=e=>{if(e.target.id==="wkClear"){ST.week=null;weekChip();render("")}};
+$("periods").innerHTML=PD.map((p,k)=>`<button class="pill" data-k="${k}"><i style="background:${COL[k]}"></i><b>${p.name}</b> · ${p.label}</button>`).join("");
+$("periods").onclick=e=>{const b=e.target.closest(".pill");if(!b)return;const k=+b.dataset.k;
+  if(ST.hidden.has(k))ST.hidden.delete(k);else if(vis().length>1)ST.hidden.add(k);else return;
+  b.classList.toggle("off",ST.hidden.has(k));render("")};
+$("segSport").onclick=e=>{const b=e.target.closest("button");if(!b)return;ST.sport=b.dataset.s;
+  [...$("segSport").children].forEach(x=>x.classList.toggle("on",x===b));render("gh")};
+$("heatP").innerHTML=PD.map((p,k)=>`<button data-k="${k}" class="${k?"":"on"}">${p.short==="this block"?"This block":p.name}</button>`).join("");
+$("heatP").onclick=e=>{const b=e.target.closest("button");if(!b)return;ST.hp=+b.dataset.k;[...$("heatP").children].forEach(x=>x.classList.toggle("on",x===b));render("h")};
+$("heatM").onclick=e=>{const b=e.target.closest("button");if(!b)return;ST.hm=b.dataset.m;[...$("heatM").children].forEach(x=>x.classList.toggle("on",x===b));render("h")};
+
+/* ---------- render all charts ---------- */
+function render(g){
+  const an=x=>g.includes(x),src=SRC(),WL=DATA.week_labels,sfx={all:"",run:" · running",ride:" · cycling"}[ST.sport],per=(M,k)=>M.map(m=>m[k]);
+  $("tGCum").textContent="Cumulative distance by day (km)"+sfx;$("tGKm").textContent="Weekly distance (km)"+sfx;
+  $("tGRe").textContent="Weekly relative effort"+sfx;$("tGDays").textContent="Active days per week"+sfx;$("tHeat").textContent="Daily training calendar"+sfx;
+  drawLoad(an("l"));
+  heat(an("h"));
+  cumLines("gCum",per(src,"cum"),an("g"));
+  bars("gKm",per(src,"wk_km"),WL,null,an("g"),{week:1});bars("gRe",per(src,"wk_re"),WL,null,an("g"),{week:1});bars("gDays",per(src,"wk_days"),WL,null,an("g"),{week:1});
+  bars("rKm",per(R,"wk_km"),WL,null,an("r"),{week:1});
+  const nr=Math.max(0,...R.map(m=>m.sessions.length));
+  bars("rRe",R.map(m=>m.sessions.map(s=>s.re)),Array.from({length:nr},(_,i)=>"Run "+(i+1)),null,an("r"));
+  paceChart("rPace",R.map(m=>m.sessions.map(s=>s.pace)),an("r"));
+  cumLines("bCum",per(B,"cum"),an("b"));
+  bars("bKm",per(B,"wk_km"),WL,null,an("b"),{week:1});bars("bEl",per(B,"wk_elev"),WL,null,an("b"),{week:1});bars("bN",per(B,"wk_n"),WL,null,an("b"),{week:1});
+  bars("bMix",per(B,"mix"),[`< ${ED[0]}`,`${ED[0]}–${ED[1]-1}`,`${ED[1]}–${ED[2]-1}`,`${ED[2]}+`],null,an("b"));
+}
+render("grhbl");
+</script>
+</body>
+</html>

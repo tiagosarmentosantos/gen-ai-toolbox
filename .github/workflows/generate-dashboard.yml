@@ -1,0 +1,76 @@
+name: Generate & Publish Dashboard
+
+on:
+  schedule:
+    - cron: '0 9 * * 0'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - 'config.json'
+      - '.github/workflows/generate-dashboard.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Prepare output folders
+        run: mkdir -p docs work
+
+      - name: Run pipeline
+        run: |
+          python scripts/compute_metrics.py \
+            --activities examples/activities_example.json \
+            --end $(date +%Y-%m-%d) \
+            --out work/metrics.json \
+            --summary
+
+          python scripts/render_dashboard.py \
+            --metrics work/metrics.json \
+            --coach examples/coach_example.json \
+            --out docs/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
+
+      - name: Commit generated dashboard
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs || true
+          git commit -m "chore: update dashboard $(date +%Y-%m-%d)" || echo "No changes"
+          git push || true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
