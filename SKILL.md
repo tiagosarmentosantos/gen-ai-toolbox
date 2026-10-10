@@ -45,6 +45,9 @@ Claude's own job is to fetch the data, write the coach's read, and deliver the f
 7. **Deliver.** Present the HTML file. If the user asked for a code block, or no file tool exists, paste the full HTML in one code block instead.
    Add a short bulleted coach summary in chat (volume, intensity distribution, training load, consistency, risks, next steps).
 
+## Without Claude
+The same pipeline runs unattended in CI: `scripts/fetch_strava.py` (Strava REST API) replaces steps 2–3's connector calls and `.github/workflows/dashboard.yml` runs it. No coach's read is generated there. See the README.
+
 ## Configuration
 
 `config.json` controls the sport types that count as runs/rides, the "hard session" effort threshold, the effort-mix bucket edges,
