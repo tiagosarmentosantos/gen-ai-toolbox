@@ -1,0 +1,109 @@
+name: Weekly Dashboard with Real Strava Data
+
+on:
+  schedule:
+    # Run every Sunday at 9 AM UTC
+    - cron: '0 9 * * 0'
+  workflow_dispatch:
+    inputs:
+      weeks:
+        description: 'Number of weeks to analyze'
+        required: false
+        default: '4'
+      end_date:
+        description: 'End date (YYYY-MM-DD, default: today)'
+        required: false
+
+jobs:
+  generate-dashboard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Create work directory
+        run: mkdir -p work docs/reports
+
+      # Step 1: Fetch real Strava data
+      - name: Fetch Strava data
+        env:
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+          STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
+          STRAVA_ACCESS_TOKEN: ${{ secrets.STRAVA_ACCESS_TOKEN }}
+          WEEKS: ${{ github.event.inputs.weeks || '4' }}
+          END_DATE: ${{ github.event.inputs.end_date }}
+        run: |
+          python scripts/fetch_strava.py \
+            --out work \
+            --weeks ${WEEKS} \
+            $( [ -z "$END_DATE" ] || echo "--end ${END_DATE}" )
+
+      # Step 2: Compute metrics from Strava data
+      - name: Compute metrics
+        env:
+          WEEKS: ${{ github.event.inputs.weeks || '4' }}
+          END_DATE: ${{ github.event.inputs.end_date }}
+        run: |
+          python scripts/compute_metrics.py \
+            --activities work/activities.json \
+            --hr work/hr_streams.json \
+            --zones work/zones.json \
+            --weeks ${WEEKS} \
+            $( [ -z "$END_DATE" ] || echo "--end ${END_DATE}" ) \
+            --out work/metrics.json \
+            --summary > work/metrics_summary.txt
+
+      # Step 3: Use static coach data (no Claude needed)
+      - name: Copy coach data
+        run: |
+          cp examples/coach_example.json work/coach.json
+
+      # Step 4: Render dashboard HTML
+      - name: Render dashboard
+        run: |
+          python scripts/render_dashboard.py \
+            --metrics work/metrics.json \
+            --coach work/coach.json \
+            --out docs/dashboard.html
+
+      # Step 5: Generate index pages
+      - name: Generate index pages
+        run: python scripts/generate_index.py
+
+      # Step 6: Upload and deploy to Pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      # Step 7: Commit changes back to repo
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git commit -m "chore: update dashboard with real Strava data $(date +%Y-%m-%d)" || echo "No changes"
+          git push || true
+
+      # Step 8: Summary
+      - name: Workflow summary
+        if: always()
+        run: |
+          echo "✅ Dashboard generated successfully!"
+          echo "📍 Live at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          echo "📊 Data source: Real Strava API"
