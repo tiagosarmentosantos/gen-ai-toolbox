@@ -2,7 +2,6 @@ name: Weekly Dashboard with Real Strava Data
 
 on:
   schedule:
-    # Run every Sunday at 9 AM UTC
     - cron: '0 9 * * 0'
   workflow_dispatch:
     inputs:
@@ -34,7 +33,6 @@ jobs:
       - name: Create work directory
         run: mkdir -p work docs/reports
 
-      # Step 1: Fetch real Strava data
       - name: Fetch Strava data
         env:
           STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
@@ -49,7 +47,6 @@ jobs:
             --weeks ${WEEKS} \
             $( [ -z "$END_DATE" ] || echo "--end ${END_DATE}" )
 
-      # Step 2: Compute metrics from Strava data
       - name: Compute metrics
         env:
           WEEKS: ${{ github.event.inputs.weeks || '4' }}
@@ -64,12 +61,10 @@ jobs:
             --out work/metrics.json \
             --summary > work/metrics_summary.txt
 
-      # Step 3: Use static coach data (no Claude needed)
       - name: Copy coach data
         run: |
           cp examples/coach_example.json work/coach.json
 
-      # Step 4: Render dashboard HTML
       - name: Render dashboard
         run: |
           python scripts/render_dashboard.py \
@@ -77,11 +72,10 @@ jobs:
             --coach work/coach.json \
             --out docs/dashboard.html
 
-      # Step 5: Generate index pages
       - name: Generate index pages
-        run: python scripts/generate_index.py
+        run: |
+          python scripts/generate_index.py
 
-      # Step 6: Upload and deploy to Pages
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -91,7 +85,6 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      # Step 7: Commit changes back to repo
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
@@ -99,11 +92,3 @@ jobs:
           git add docs/
           git commit -m "chore: update dashboard with real Strava data $(date +%Y-%m-%d)" || echo "No changes"
           git push || true
-
-      # Step 8: Summary
-      - name: Workflow summary
-        if: always()
-        run: |
-          echo "✅ Dashboard generated successfully!"
-          echo "📍 Live at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-          echo "📊 Data source: Real Strava API"
